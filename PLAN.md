@@ -109,3 +109,12 @@ The user's scheduling clarification is recorded: prepare the kit; testing happen
 ## GitHub and Vercel release setup — in progress
 
 User authorized repository setup and Vercel publication. Authenticated GitHub/Vercel identity: timothynice. Adding CDN/frontend + shared serverless API routing, server-side provider settings, a memory-only shared AI access code, and GitHub CI. No Clips publication, competition submission or legal acceptance is included. Local machine instructions and generated evidence/recordings remain outside the repository. Deployment and hosted verification results follow after checks.
+
+## GitHub and Vercel — completed
+
+- Repository: https://github.com/timothynice/wonderbox (public, owned by timothynice). Production: https://wonderbox-three.vercel.app. Main pushes deploy automatically through the connected Vercel Git integration. Vercel project uses Node24.
+- Server-side Gemini key and shared AI access code configured as secrets for Production/Preview. Public direct creation remains usable; credentialed AI calls require the code. Hosted AI fails closed when code configuration is absent. Code is memory-only in the browser; owner copy is in ignored `.vercel/ai-access-code` with mode0600. Never commit or publicly share it.
+-59unit tests/12files, typecheck, build, dependency policy and3/3 local browser paths pass. Canvas fallback3/3 also passes. GitHub CI run41551391561 passed all gates on Linux with retries disabled. Linux uses the production Canvas fallback to avoid GPU emulation; local default and hosted checks retain WebGL. Checkpoint inputs now wait for landing before crossing the flag.
+- Hosted keyboard/pause/runtime separation, manual float/reload, genuine Gemini float edit/Undo, terrain painting/Undo, placement/duplicate/delete/Undo, typing isolation, export/import/reload/invalid rollback all verified. Hosted desktop/narrow screenshots inspected; no horizontal overflow. Unauthorized AI401 and foreign-origin mutation403 verified.
+- Native Node ESM imports corrected after detecting the first deployment's function startup failure. Earlier failing/obsolete CI/deployments remain history, not passing evidence. Local CLI callback trailing semicolons adjusted for the current runner parser.
+- Known nested-Zod advisory remains:4high package findings, no new findings. Public Clips, owner testing and final competition submission/terms remain user steps. No competition entry submitted.

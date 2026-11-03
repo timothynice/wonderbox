@@ -72,4 +72,4 @@ async (page) => {
   if (Math.abs(before - after) > 1) throw Error("typing moved game");
   report.push("keyboard typing isolation");
   return { report, projectRevision: (await read()).revision };
-};
+}

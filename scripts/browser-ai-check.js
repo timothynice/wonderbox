@@ -98,4 +98,4 @@ async (page) => {
     revision: next.revision,
     stars: next.entities.filter((e) => e.kind === "star").length,
   };
-};
+}

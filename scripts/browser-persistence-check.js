@@ -55,4 +55,4 @@ async (page) => {
     throw Error("invalid import mutated state");
   report.push("invalid import rollback");
   return { report, revision: restored.revision };
-};
+}

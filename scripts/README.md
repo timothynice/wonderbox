@@ -44,3 +44,5 @@ The same three tests now protect safe-edit resume, pure visual previews and Disc
 `npm run check:dependencies` runs a fresh production audit with one exact, visible reviewed exception; registry errors and new findings fail. This does not remove the remaining advisory. Current unit count58. The same three browser flows also protect mechanical step preview/Discard/Apply/Undo without model calls and exhausted-search Retry. See docs/evidence/followup-step-planning.md for separate genuine-model results.
 
 GitHub CI runs the same three tests with `PW_CANVAS=1`, disabling browser WebGL so Phaser AUTO uses its real Canvas fallback on GPU-free Linux runners. Default local checks retain WebGL. No simulation or provider assertions are bypassed. The checkpoint route waits for landing before crossing its flag, avoiding airborne overshoot on slow renderers.
+
+For hosted live-provider callbacks, enter the owner-provided AI access code in the creative partner panel first. It clears on reload by design. Never paste a provider API key there or put either secret into callback source.
