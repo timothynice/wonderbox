@@ -1,0 +1,20 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+output/
+*.log
+.DS_Store
+
+.playwright-cli/
+test-results/
+playwright-report/
+
+.vercel/
+# Local machine instructions contain account-specific configuration.
+AGENTS.md
+.vercel
+.env*
+
+!.env.example

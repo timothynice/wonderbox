@@ -1,0 +1,18 @@
+{
+  "game": "Wonderbox / Moonlight Garden",
+  "version": "2026-11-01 pre-polish baseline, runtime-first.png; before three-heart revision",
+  "audience_segment": "desktop novice creator; heuristic baseline, not human study",
+  "scale_max": 5,
+  "gate_threshold": 3,
+  "dimensions": [
+    {"name": "State and goal clarity", "weight": 15, "rating": 3, "confidence": "medium", "gate": true, "evidence": "Observed screenshot: active Play/Edit, three-star goal, status line, keyboard hints; comprehension not human-tested."},
+    {"name": "Agency and meaningful decisions", "weight": 15, "rating": 4, "confidence": "medium", "gate": false, "evidence": "Measured action/history tests and live-ai.json: edits change float, throwability, transformation and light response with shared validated transactions."},
+    {"name": "Skill readability and mastery", "weight": 15, "rating": 3, "confidence": "low", "gate": false, "evidence": "Inferred: initial low steps precede higher optional ledges; no human learning curve measured."},
+    {"name": "Challenge calibration and fairness", "weight": 15, "rating": 2, "confidence": "medium", "gate": true, "evidence": "Observed by root keyboard route: original contact death punished navigation. Subsequent three-heart revision is separate from this baseline."},
+    {"name": "Feedback and game feel", "weight": 10, "rating": 3, "confidence": "low", "gate": false, "evidence": "Source inspection: coyote time, jump buffer, variable jump, tones and state feedback; no end-to-end latency or player confidence measurement."},
+    {"name": "Pacing and attention rhythm", "weight": 10, "rating": 3, "confidence": "low", "gate": false, "evidence": "Inferred: short continuous route, checkpoint and immediate editing reduce dead time; no session-duration distribution."},
+    {"name": "Motivation", "weight": 10, "rating": 3, "confidence": "low", "gate": false, "evidence": "Hypothesis only: optional discoveries and reversible creation support curiosity and autonomy. Enjoyment and repeat desire unmeasured."},
+    {"name": "Accessibility and control comfort", "weight": 5, "rating": 2, "confidence": "medium", "gate": true, "evidence": "Observed screenshot/CSS: 7–10px secondary/control labels limit legibility. Keyboard alternatives exist; no remapping or touch game controls."},
+    {"name": "Aesthetic-mechanic coherence", "weight": 5, "rating": 4, "confidence": "medium", "gate": false, "evidence": "Observed screenshot: original cohesive garden sprites, lit stars, readable terrain tops, expressive creatures; transformation state requires separate runtime evidence."}
+  ]
+}

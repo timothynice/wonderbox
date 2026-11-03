@@ -1,0 +1,277 @@
+{
+  "verifiedAt": "2026-11-01T22:57:09.052Z",
+  "fixture": false,
+  "results": [
+    {
+      "prompt": "Let my character float briefly when I hold jump.",
+      "selectedId": "pip",
+      "summary": "Your character, Pip, will now float briefly for 0.65 seconds when holding the jump button.",
+      "actions": [
+        {
+          "type": "setBehavior",
+          "id": "pip",
+          "behaviors": {
+            "floatSeconds": 0.65
+          }
+        }
+      ],
+      "requiresApproval": false,
+      "baseRevision": 0,
+      "affectedIds": [
+        "pip"
+      ],
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "usedFallback": false
+    },
+    {
+      "prompt": "Make this plant throwable.",
+      "selectedId": "demo-plant",
+      "summary": "The 'Turnip sprout' plant (ID: demo-plant) is now throwable.",
+      "actions": [
+        {
+          "type": "setBehavior",
+          "id": "demo-plant",
+          "behaviors": {
+            "throwable": true
+          }
+        }
+      ],
+      "requiresApproval": false,
+      "baseRevision": 1,
+      "affectedIds": [
+        "demo-plant"
+      ],
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "usedFallback": false
+    },
+    {
+      "prompt": "Turn this enemy into a bouncing platform when a thrown object hits it.",
+      "selectedId": "mossling",
+      "summary": "The 'Mossling' enemy will now transform into a bouncing platform when hit by a thrown object.",
+      "actions": [
+        {
+          "type": "setBehavior",
+          "id": "mossling",
+          "behaviors": {
+            "transformOnHit": true
+          }
+        }
+      ],
+      "requiresApproval": false,
+      "baseRevision": 2,
+      "affectedIds": [
+        "mossling"
+      ],
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "usedFallback": false
+    },
+    {
+      "prompt": "Change this garden to moonlight, preserve platforms, and make these creatures afraid of my lantern.",
+      "selectedId": "shadebug",
+      "summary": "The world atmosphere is now moonlight, and all enemies (Mossling, Shadebug, Nightling) are now afraid of light.",
+      "actions": [
+        {
+          "type": "setWorldSettings",
+          "settings": {
+            "atmosphere": "moonlight"
+          }
+        },
+        {
+          "type": "setBehavior",
+          "id": "mossling",
+          "behaviors": {
+            "fearsLight": true
+          }
+        },
+        {
+          "type": "setBehavior",
+          "id": "shadebug",
+          "behaviors": {
+            "fearsLight": true
+          }
+        },
+        {
+          "type": "setBehavior",
+          "id": "nightling",
+          "behaviors": {
+            "fearsLight": true
+          }
+        }
+      ],
+      "requiresApproval": true,
+      "baseRevision": 3,
+      "affectedIds": [
+        "pip",
+        "demo-plant",
+        "toss-plant",
+        "bounce-plant",
+        "mossling",
+        "shadebug",
+        "nightling",
+        "star-one",
+        "star-two",
+        "star-three",
+        "drifting-leaf",
+        "garden-lantern",
+        "checkpoint",
+        "exit",
+        "optional-bloom"
+      ],
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "usedFallback": false
+    },
+    {
+      "prompt": "Add three stars and require them to open the exit.",
+      "selectedId": null,
+      "summary": "Three new stars have been added to the world, and the exit now requires 3 stars to open.",
+      "actions": [
+        {
+          "type": "addEntity",
+          "entity": {
+            "id": "new-star-1",
+            "kind": "star",
+            "name": "New Star 1",
+            "x": 700,
+            "y": 410,
+            "width": 28,
+            "height": 28,
+            "locked": false,
+            "behaviors": {
+              "floatSeconds": 0,
+              "throwable": false,
+              "portableLight": false,
+              "lightRadius": 180,
+              "fearsLight": false,
+              "transformOnHit": false,
+              "bounceSpeed": 900,
+              "patrolSpeed": 55,
+              "patrolRange": 100,
+              "moveAxis": "x",
+              "moveDistance": 140,
+              "moveSpeed": 65,
+              "requiredStars": 3
+            }
+          }
+        },
+        {
+          "type": "addEntity",
+          "entity": {
+            "id": "new-star-2",
+            "kind": "star",
+            "name": "New Star 2",
+            "x": 1780,
+            "y": 322,
+            "width": 28,
+            "height": 28,
+            "locked": false,
+            "behaviors": {
+              "floatSeconds": 0,
+              "throwable": false,
+              "portableLight": false,
+              "lightRadius": 180,
+              "fearsLight": false,
+              "transformOnHit": false,
+              "bounceSpeed": 900,
+              "patrolSpeed": 55,
+              "patrolRange": 100,
+              "moveAxis": "x",
+              "moveDistance": 140,
+              "moveSpeed": 65,
+              "requiredStars": 3
+            }
+          }
+        },
+        {
+          "type": "addEntity",
+          "entity": {
+            "id": "new-star-3",
+            "kind": "star",
+            "name": "New Star 3",
+            "x": 2180,
+            "y": 492,
+            "width": 28,
+            "height": 28,
+            "locked": false,
+            "behaviors": {
+              "floatSeconds": 0,
+              "throwable": false,
+              "portableLight": false,
+              "lightRadius": 180,
+              "fearsLight": false,
+              "transformOnHit": false,
+              "bounceSpeed": 900,
+              "patrolSpeed": 55,
+              "patrolRange": 100,
+              "moveAxis": "x",
+              "moveDistance": 140,
+              "moveSpeed": 65,
+              "requiredStars": 3
+            }
+          }
+        },
+        {
+          "type": "setBehavior",
+          "id": "exit",
+          "behaviors": {
+            "requiredStars": 3
+          }
+        }
+      ],
+      "requiresApproval": true,
+      "baseRevision": 4,
+      "affectedIds": [
+        "new-star-1",
+        "new-star-2",
+        "new-star-3",
+        "exit"
+      ],
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "usedFallback": false
+    },
+    {
+      "prompt": "Make this jump easier without changing the character. Add one small step between the first-step and petal-step.",
+      "selectedId": null,
+      "summary": "A new small step has been added between the 'first-step' and 'petal-step' to make the jump easier.",
+      "actions": [
+        {
+          "type": "paintTerrain",
+          "terrain": [
+            {
+              "id": "mid-step",
+              "x": 580,
+              "y": 480,
+              "width": 80,
+              "height": 24
+            }
+          ],
+          "eraseIds": []
+        }
+      ],
+      "requiresApproval": false,
+      "baseRevision": 5,
+      "affectedIds": [
+        "mid-step"
+      ],
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "usedFallback": false
+    },
+    {
+      "prompt": "Add multiplayer with voice chat.",
+      "selectedId": null,
+      "summary": "Adding multiplayer with voice chat is not supported by the current editing capabilities. This feature would require core game engine modifications beyond the scope of entity and world property adjustments.",
+      "actions": [],
+      "requiresApproval": false,
+      "baseRevision": 6,
+      "affectedIds": [],
+      "provider": "gemini",
+      "model": "gemini-2.5-flash",
+      "usedFallback": false
+    }
+  ]
+}

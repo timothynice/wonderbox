@@ -1,0 +1,9 @@
+node_modules
+output
+test-results
+playwright-report
+.env
+.env.*
+!.env.example
+.git
+AGENTS.md

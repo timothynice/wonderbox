@@ -1,0 +1,357 @@
+{
+  "verifiedAt": "2026-11-01T22:48:23.665Z",
+  "fixture": false,
+  "results": [
+    {
+      "prompt": "Let my character float briefly when I hold jump.",
+      "selectedId": "pip",
+      "summary": "Set Pip's float duration to 0.65 seconds to allow brief floating while holding jump.",
+      "actions": [
+        {
+          "type": "setBehavior",
+          "id": "pip",
+          "behaviors": {
+            "floatSeconds": 0.65
+          }
+        }
+      ],
+      "requiresApproval": false,
+      "baseRevision": 0,
+      "affectedIds": [
+        "pip"
+      ],
+      "provider": "gemini",
+      "model": "gemini-3.5-flash"
+    },
+    {
+      "prompt": "Make this plant throwable.",
+      "selectedId": "demo-plant",
+      "summary": "Made Turnip sprout throwable.",
+      "actions": [
+        {
+          "type": "setBehavior",
+          "id": "demo-plant",
+          "behaviors": {
+            "throwable": true
+          }
+        }
+      ],
+      "requiresApproval": false,
+      "baseRevision": 1,
+      "affectedIds": [
+        "demo-plant"
+      ],
+      "provider": "gemini",
+      "model": "gemini-3.5-flash"
+    },
+    {
+      "prompt": "Turn this enemy into a bouncing platform when a thrown object hits it.",
+      "selectedId": "mossling",
+      "summary": "Set Mossling to transform into a bouncy platform when struck by a thrown object.",
+      "actions": [
+        {
+          "type": "setBehavior",
+          "id": "mossling",
+          "behaviors": {
+            "transformOnHit": true
+          }
+        }
+      ],
+      "requiresApproval": false,
+      "baseRevision": 2,
+      "affectedIds": [
+        "mossling"
+      ],
+      "provider": "gemini",
+      "model": "gemini-3.5-flash"
+    },
+    {
+      "prompt": "Change this garden to moonlight, preserve platforms, and make these creatures afraid of my lantern.",
+      "selectedId": "shadebug",
+      "error": "The AI provider rejected the request (503). Check the server provider, model and credentials. Nothing changed.",
+      "summary": "Provider/validation failure"
+    },
+    {
+      "prompt": "Add three stars and require them to open the exit.",
+      "selectedId": null,
+      "summary": "Added 3 new stars across the platforms and set the Starlight Gate to require 3 stars to open.",
+      "actions": [
+        {
+          "type": "addEntity",
+          "entity": {
+            "id": "star-four",
+            "kind": "star",
+            "name": "High wish",
+            "x": 360,
+            "y": 292,
+            "width": 24,
+            "height": 24,
+            "locked": false,
+            "behaviors": {
+              "floatSeconds": 0,
+              "throwable": false,
+              "portableLight": false,
+              "lightRadius": 180,
+              "fearsLight": false,
+              "transformOnHit": false,
+              "bounceSpeed": 780,
+              "patrolSpeed": 55,
+              "patrolRange": 100,
+              "moveAxis": "x",
+              "moveDistance": 140,
+              "moveSpeed": 65,
+              "requiredStars": 3
+            }
+          }
+        },
+        {
+          "type": "addEntity",
+          "entity": {
+            "id": "star-five",
+            "kind": "star",
+            "name": "Petal wish",
+            "x": 710,
+            "y": 410,
+            "width": 24,
+            "height": 24,
+            "locked": false,
+            "behaviors": {
+              "floatSeconds": 0,
+              "throwable": false,
+              "portableLight": false,
+              "lightRadius": 180,
+              "fearsLight": false,
+              "transformOnHit": false,
+              "bounceSpeed": 780,
+              "patrolSpeed": 55,
+              "patrolRange": 100,
+              "moveAxis": "x",
+              "moveDistance": 140,
+              "moveSpeed": 65,
+              "requiredStars": 3
+            }
+          }
+        },
+        {
+          "type": "addEntity",
+          "entity": {
+            "id": "star-six",
+            "kind": "star",
+            "name": "Dusk wish",
+            "x": 2180,
+            "y": 492,
+            "width": 24,
+            "height": 24,
+            "locked": false,
+            "behaviors": {
+              "floatSeconds": 0,
+              "throwable": false,
+              "portableLight": false,
+              "lightRadius": 180,
+              "fearsLight": false,
+              "transformOnHit": false,
+              "bounceSpeed": 780,
+              "patrolSpeed": 55,
+              "patrolRange": 100,
+              "moveAxis": "x",
+              "moveDistance": 140,
+              "moveSpeed": 65,
+              "requiredStars": 3
+            }
+          }
+        },
+        {
+          "type": "setBehavior",
+          "id": "exit",
+          "behaviors": {
+            "requiredStars": 3
+          }
+        }
+      ],
+      "requiresApproval": true,
+      "baseRevision": 3,
+      "affectedIds": [
+        "star-four",
+        "star-five",
+        "star-six",
+        "exit"
+      ],
+      "provider": "gemini",
+      "model": "gemini-3.5-flash"
+    },
+    {
+      "prompt": "Make this jump easier without changing the character. Add one small step between the first-step and petal-step.",
+      "selectedId": null,
+      "summary": "Added a small intermediate step platform between the first-step and petal-step to make the jump easier.",
+      "actions": [
+        {
+          "type": "paintTerrain",
+          "terrain": [
+            {
+              "id": "garden-floor",
+              "x": 0,
+              "y": 620,
+              "width": 3200,
+              "height": 100
+            },
+            {
+              "id": "first-step",
+              "x": 400,
+              "y": 520,
+              "width": 180,
+              "height": 24
+            },
+            {
+              "id": "mid-step",
+              "x": 560,
+              "y": 479,
+              "width": 80,
+              "height": 24
+            },
+            {
+              "id": "petal-step",
+              "x": 650,
+              "y": 438,
+              "width": 160,
+              "height": 24
+            },
+            {
+              "id": "optional-float-ledge",
+              "x": 300,
+              "y": 320,
+              "width": 150,
+              "height": 24
+            },
+            {
+              "id": "lantern-terrace",
+              "x": 1120,
+              "y": 520,
+              "width": 250,
+              "height": 24
+            },
+            {
+              "id": "bounce-perch",
+              "x": 1520,
+              "y": 350,
+              "width": 180,
+              "height": 24
+            },
+            {
+              "id": "last-step",
+              "x": 2110,
+              "y": 520,
+              "width": 170,
+              "height": 24
+            },
+            {
+              "id": "star-terrace",
+              "x": 2340,
+              "y": 438,
+              "width": 190,
+              "height": 24
+            },
+            {
+              "id": "exit-step",
+              "x": 2700,
+              "y": 548,
+              "width": 120,
+              "height": 24
+            }
+          ],
+          "eraseIds": []
+        }
+      ],
+      "requiresApproval": true,
+      "baseRevision": 4,
+      "affectedIds": [
+        "garden-floor",
+        "first-step",
+        "mid-step",
+        "petal-step",
+        "optional-float-ledge",
+        "lantern-terrace",
+        "bounce-perch",
+        "last-step",
+        "star-terrace",
+        "exit-step"
+      ],
+      "provider": "gemini",
+      "model": "gemini-3.5-flash"
+    },
+    {
+      "prompt": "Add multiplayer with voice chat.",
+      "selectedId": null,
+      "summary": "Multiplayer and voice chat are not supported in this 2D platformer engine. You can instead edit single-player elements, such as adding platforms, enemies, stars, checkpoints, throwable items, or tweaking the level layout and atmosphere.",
+      "actions": [],
+      "requiresApproval": false,
+      "baseRevision": 5,
+      "affectedIds": [],
+      "provider": "gemini",
+      "model": "gemini-3.5-flash"
+    }
+  ],
+  "retries": [
+    {
+      "verifiedAt": "2026-11-01T22:48:46.244Z",
+      "prompt": "Change this garden to moonlight, preserve platforms, and make these creatures afraid of my lantern.",
+      "summary": "Set the atmosphere to moonlight and made Mossling, Shadebug, and Nightling afraid of light.",
+      "actions": [
+        {
+          "type": "setWorldSettings",
+          "settings": {
+            "atmosphere": "moonlight"
+          }
+        },
+        {
+          "type": "setBehavior",
+          "id": "mossling",
+          "behaviors": {
+            "fearsLight": true
+          }
+        },
+        {
+          "type": "setBehavior",
+          "id": "shadebug",
+          "behaviors": {
+            "fearsLight": true
+          }
+        },
+        {
+          "type": "setBehavior",
+          "id": "nightling",
+          "behaviors": {
+            "fearsLight": true
+          }
+        }
+      ],
+      "requiresApproval": true,
+      "baseRevision": 1,
+      "affectedIds": [
+        "pip",
+        "demo-plant",
+        "toss-plant",
+        "bounce-plant",
+        "mossling",
+        "shadebug",
+        "nightling",
+        "star-one",
+        "star-two",
+        "star-three",
+        "drifting-leaf",
+        "garden-lantern",
+        "checkpoint",
+        "exit",
+        "optional-bloom"
+      ],
+      "provider": "gemini",
+      "model": "gemini-3.5-flash",
+      "assertions": {
+        "moonlight": true,
+        "preservesTransformation": true,
+        "preservesFloat": true,
+        "terrainPreserved": true,
+        "fearsLight": true
+      }
+    }
+  ]
+}

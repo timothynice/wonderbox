@@ -1,0 +1,25 @@
+{
+  "verifiedAt": "2026-11-01T22:57:25.865Z",
+  "fixture": false,
+  "configuredPrimary": "gemini-3.5-flash",
+  "result": {
+    "summary": "Updated Pip to allow floating for 0.65 seconds while holding jump.",
+    "actions": [
+      {
+        "type": "setBehavior",
+        "id": "pip",
+        "behaviors": {
+          "floatSeconds": 0.65
+        }
+      }
+    ],
+    "requiresApproval": false,
+    "baseRevision": 0,
+    "affectedIds": [
+      "pip"
+    ],
+    "provider": "gemini",
+    "model": "gemini-3.5-flash",
+    "usedFallback": false
+  }
+}

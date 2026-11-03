@@ -1,0 +1,116 @@
+{
+  "auditReportVersion": 2,
+  "vulnerabilities": {
+    "@ag-ui/core": {
+      "name": "@ag-ui/core",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "zod"
+      ],
+      "effects": [
+        "@agent-native/agentkit"
+      ],
+      "range": "<=0.0.59",
+      "nodes": [
+        "node_modules/@agent-native/agentkit/node_modules/@ag-ui/core"
+      ],
+      "fixAvailable": {
+        "name": "@agent-native/core",
+        "version": "0.178.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@agent-native/agentkit": {
+      "name": "@agent-native/agentkit",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        "@ag-ui/core"
+      ],
+      "effects": [
+        "@agent-native/core"
+      ],
+      "range": "*",
+      "nodes": [
+        "node_modules/@agent-native/agentkit"
+      ],
+      "fixAvailable": {
+        "name": "@agent-native/core",
+        "version": "0.178.1",
+        "isSemVerMajor": true
+      }
+    },
+    "@agent-native/core": {
+      "name": "@agent-native/core",
+      "severity": "high",
+      "isDirect": true,
+      "via": [
+        "@agent-native/agentkit"
+      ],
+      "effects": [],
+      "range": "0.178.2-nightly-20260910195009 - 0.223.0-nightly-20261102004443",
+      "nodes": [
+        "node_modules/@agent-native/core"
+      ],
+      "fixAvailable": {
+        "name": "@agent-native/core",
+        "version": "0.178.1",
+        "isSemVerMajor": true
+      }
+    },
+    "zod": {
+      "name": "zod",
+      "severity": "high",
+      "isDirect": false,
+      "via": [
+        {
+          "source": 1243066,
+          "name": "zod",
+          "dependency": "zod",
+          "title": "Zod can exhaust memory while validating oversized constrained collections",
+          "url": "https://github.com/advisories/GHSA-mrhx-c7xc-m3w5",
+          "severity": "high",
+          "cwe": [
+            "CWE-770"
+          ],
+          "cvss": {
+            "score": 7.5,
+            "vectorString": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H"
+          },
+          "range": "<4.6.6"
+        }
+      ],
+      "effects": [
+        "@ag-ui/core"
+      ],
+      "range": "<4.6.6",
+      "nodes": [
+        "node_modules/@agent-native/agentkit/node_modules/zod"
+      ],
+      "fixAvailable": {
+        "name": "@agent-native/core",
+        "version": "0.178.1",
+        "isSemVerMajor": true
+      }
+    }
+  },
+  "metadata": {
+    "vulnerabilities": {
+      "info": 0,
+      "low": 0,
+      "moderate": 0,
+      "high": 4,
+      "critical": 0,
+      "total": 4
+    },
+    "dependencies": {
+      "prod": 344,
+      "dev": 117,
+      "optional": 69,
+      "peer": 0,
+      "peerOptional": 0,
+      "total": 529
+    }
+  }
+}
