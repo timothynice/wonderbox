@@ -1,6 +1,6 @@
 import { defineAction } from '@agent-native/core/action';
 import { z } from 'zod';
-import { projectSchema, behaviorSchema } from '../src/shared/model';
+import { projectSchema, behaviorSchema } from '../src/shared/model.js';
 
 export const inspectProjectInput = z.object({
   project: projectSchema,

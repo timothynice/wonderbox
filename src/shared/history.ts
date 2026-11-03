@@ -1,10 +1,10 @@
-import { applyTransaction, type Action, type ActionSource } from "./actions";
+import { applyTransaction, type Action, type ActionSource } from "./actions.js";
 import {
   cloneProject,
   parseProject,
   serializeProject,
   type Project,
-} from "./model";
+} from "./model.js";
 
 export class ProjectHistory {
   project: Project;

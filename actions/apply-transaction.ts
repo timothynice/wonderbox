@@ -1,11 +1,11 @@
 import { defineAction } from "@agent-native/core/action";
 import { z } from "zod";
-import { projectSchema } from "../src/shared/model";
-import { actionSchema, applyTransaction } from "../src/shared/actions";
-import { needsApproval } from "./approval";
-import { checkRequestSchema } from '../src/shared/reachability';
-import checkRoute from './check-reachability';
-import { assertCheckedTerrainIntent } from './checked-intent';
+import { projectSchema } from "../src/shared/model.js";
+import { actionSchema, applyTransaction } from "../src/shared/actions.js";
+import { needsApproval } from "./approval.js";
+import { checkRequestSchema } from '../src/shared/reachability.js';
+import checkRoute from './check-reachability.js';
+import { assertCheckedTerrainIntent } from './checked-intent.js';
 
 /** The single authored mutation boundary for direct manipulation and the model. */
 export const applyTransactionInput = z

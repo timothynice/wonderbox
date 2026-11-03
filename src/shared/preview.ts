@@ -1,6 +1,6 @@
-import { applyTransaction, type Action, type ActionSource } from "./actions";
-import type { Project } from "./model";
-import { deriveEditImpact, type EditImpact } from "./edit-impact";
+import { applyTransaction, type Action, type ActionSource } from "./actions.js";
+import type { Project } from "./model.js";
+import { deriveEditImpact, type EditImpact } from "./edit-impact.js";
 
 export type TransactionPreview = {
   baseRevision: number;

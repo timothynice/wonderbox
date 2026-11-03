@@ -7,7 +7,7 @@ import {
   worldPatchSchema,
   cloneProject,
   type Project,
-} from "./model";
+} from "./model.js";
 
 export const actionSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("addEntity"), entity: entitySchema }).strict(),

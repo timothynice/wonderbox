@@ -1,4 +1,4 @@
-import type { Action } from "../src/shared/actions";
+import type { Action } from "../src/shared/actions.js";
 
 /** This policy is code, so an AI-generated approval flag cannot weaken it. */
 export function needsApproval(actions: Action[]) {

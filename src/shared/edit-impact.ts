@@ -1,4 +1,4 @@
-import type { Entity, Project, Terrain, WorldSettings } from "./model";
+import type { Entity, Project, Terrain, WorldSettings } from "./model.js";
 
 export type ObjectChange<T extends { id: string }> = {
   id: string;

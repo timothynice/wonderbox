@@ -1,4 +1,4 @@
-import { moveBody, type Body, type Rect } from '../game/physics';
+import { moveBody, type Body, type Rect } from '../game/physics.js';
 
 export const MOTION_VERSION = 'wonderbox-motion-1';
 export const FIXED_STEP = 1 / 120;

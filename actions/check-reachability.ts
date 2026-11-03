@@ -1,7 +1,7 @@
 import { defineAction } from '@agent-native/core/action';
 import { z } from 'zod';
-import { projectSchema } from '../src/shared/model';
-import { checkRequestSchema, checkReachability } from '../src/shared/reachability';
+import { projectSchema } from '../src/shared/model.js';
+import { checkRequestSchema, checkReachability } from '../src/shared/reachability.js';
 
 export const checkReachabilityInput = z.object({ project: projectSchema, check: checkRequestSchema }).strict();
 

@@ -4,12 +4,12 @@ import path from "node:path";
 import { timingSafeEqual } from "node:crypto";
 import { fileURLToPath } from "node:url";
 import { ZodError } from "zod";
-import applyEdit from "../actions/apply-transaction";
-import { proposeEdit, providerConfig, ProviderError } from "./agent";
-import inspectProject from '../actions/inspect-project';
-import previewTransaction from '../actions/preview-transaction';
-import checkReachability from '../actions/check-reachability';
-import planStaticStep from '../actions/plan-static-step';
+import applyEdit from "../actions/apply-transaction.js";
+import { proposeEdit, providerConfig, ProviderError } from "./agent.js";
+import inspectProject from '../actions/inspect-project.js';
+import previewTransaction from '../actions/preview-transaction.js';
+import checkReachability from '../actions/check-reachability.js';
+import planStaticStep from '../actions/plan-static-step.js';
 
 export const app = express();
 app.disable("x-powered-by");

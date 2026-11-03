@@ -1,5 +1,5 @@
-import type { Project } from '../src/shared/model';
-import { checkReachability, type CheckRequest } from '../src/shared/reachability';
+import type { Project } from '../src/shared/model.js';
+import { checkReachability, type CheckRequest } from '../src/shared/reachability.js';
 
 /** A checked terrain-edit promise has a fixed meaning independent of the prompt.
  * It cannot be satisfied by moving the goal, changing the character or changing

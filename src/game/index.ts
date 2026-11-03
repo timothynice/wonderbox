@@ -1,25 +1,25 @@
 import Phaser from "phaser";
-import type { Project, Entity, Terrain } from "../shared/model";
+import type { Project, Entity, Terrain } from "../shared/model.js";
 import {
   deriveEditImpact,
   type EditImpact,
   type ReconcileOptions,
-} from "../shared/edit-impact";
-import { stepPlayerMotion } from "../shared/movement";
+} from "../shared/edit-impact.js";
+import { stepPlayerMotion } from "../shared/movement.js";
 import {
   checkReachability,
   mechanicsFingerprint,
   reachabilityEvidenceSchema,
   type ReachabilityEvidence,
   type WitnessInput,
-} from "../shared/reachability";
+} from "../shared/reachability.js";
 import {
   moveBody,
   overlaps,
   crossedTop,
   type Body,
   type Rect,
-} from "./physics";
+} from "./physics.js";
 
 type Kind = Entity["kind"];
 export type GameTool = "select" | "terrain" | "erase" | Kind;

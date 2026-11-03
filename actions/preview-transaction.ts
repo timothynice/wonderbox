@@ -1,10 +1,10 @@
 import { defineAction } from '@agent-native/core/action';
 import { z } from 'zod';
-import { projectSchema } from '../src/shared/model';
-import { actionSchema, applyTransaction } from '../src/shared/actions';
-import { buildTransactionPreview } from '../src/shared/preview';
-import { checkRequestSchema } from '../src/shared/reachability';
-import { assertCheckedTerrainIntent } from './checked-intent';
+import { projectSchema } from '../src/shared/model.js';
+import { actionSchema, applyTransaction } from '../src/shared/actions.js';
+import { buildTransactionPreview } from '../src/shared/preview.js';
+import { checkRequestSchema } from '../src/shared/reachability.js';
+import { assertCheckedTerrainIntent } from './checked-intent.js';
 
 export const previewTransactionInput = z.object({
   project: projectSchema,

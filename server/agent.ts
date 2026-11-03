@@ -1,14 +1,14 @@
-import planStaticStep from '../actions/plan-static-step';
+import planStaticStep from '../actions/plan-static-step.js';
 import { z } from "zod";
-import { projectSchema, type Project } from "../src/shared/model";
-import { actionSchema, applyTransaction, type Action } from "../src/shared/actions";
-import inspectProject from "../actions/inspect-project";
-import previewTransaction from "../actions/preview-transaction";
-import checkRoute from "../actions/check-reachability";
-import type { ReachabilityEvidence, CheckRequest } from "../src/shared/reachability";
-import type { TransactionPreview } from '../src/shared/preview';
-import { needsApproval } from "../actions/approval";
-export { needsApproval } from "../actions/approval";
+import { projectSchema, type Project } from "../src/shared/model.js";
+import { actionSchema, applyTransaction, type Action } from "../src/shared/actions.js";
+import inspectProject from "../actions/inspect-project.js";
+import previewTransaction from "../actions/preview-transaction.js";
+import checkRoute from "../actions/check-reachability.js";
+import type { ReachabilityEvidence, CheckRequest } from "../src/shared/reachability.js";
+import type { TransactionPreview } from '../src/shared/preview.js';
+import { needsApproval } from "../actions/approval.js";
+export { needsApproval } from "../actions/approval.js";
 
 export const agentInputSchema = z
   .object({

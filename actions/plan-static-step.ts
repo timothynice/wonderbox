@@ -1,10 +1,10 @@
 import { defineAction } from '@agent-native/core/action';
 import { z } from 'zod';
-import { projectSchema } from '../src/shared/model';
-import { applyTransaction, type Action } from '../src/shared/actions';
-import { checkReachability, checkRequestSchema, type ReachabilityEvidence } from '../src/shared/reachability';
-import { overlaps } from '../src/game/physics';
-import previewTransaction from './preview-transaction';
+import { projectSchema } from '../src/shared/model.js';
+import { applyTransaction, type Action } from '../src/shared/actions.js';
+import { checkReachability, checkRequestSchema, type ReachabilityEvidence } from '../src/shared/reachability.js';
+import { overlaps } from '../src/game/physics.js';
+import previewTransaction from './preview-transaction.js';
 
 const MAX_ATTEMPTS = 24;
 const MAX_OPTIONS = 3;

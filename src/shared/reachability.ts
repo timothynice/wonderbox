@@ -1,7 +1,7 @@
 import { z } from 'zod';
-import { type Project, type Terrain } from './model';
-import { overlaps, type Body, type Rect } from '../game/physics';
-import { createMotionState, FIXED_STEP, MOTION_VERSION, stepPlayerMotion, type MotionInput, type MotionState } from './movement';
+import { type Project, type Terrain } from './model.js';
+import { overlaps, type Body, type Rect } from '../game/physics.js';
+import { createMotionState, FIXED_STEP, MOTION_VERSION, stepPlayerMotion, type MotionInput, type MotionState } from './movement.js';
 
 export const checkRequestSchema = z.object({ targetTerrainId: z.string().min(1).max(100), sourceTerrainId: z.string().min(1).max(100).optional() }).strict();
 export type CheckRequest = z.infer<typeof checkRequestSchema>;

@@ -5,7 +5,7 @@ import {
   type EntityKind,
   type Behaviors,
   type Project,
-} from "./model";
+} from "./model.js";
 
 export function makeEntity(
   kind: EntityKind,
