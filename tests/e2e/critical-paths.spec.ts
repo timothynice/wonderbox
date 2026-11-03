@@ -159,6 +159,9 @@ test("1. play → pause → resume, interact, checkpoint and gated victory witho
   await moveTo(page, 500);
   await page.keyboard.up("Space");
   await moveTo(page, 580);
+  // Observe landing before crossing the checkpoint: slow renderers can overshoot it in the air.
+  await page.waitForFunction(() => (window as any).__wonderbox.getDebugState().player.grounded, null, { timeout: 12_000 });
+  await moveTo(page, 520);
   await expect
     .poll(async () => (await state(page)).checkpoint)
     .toBe("test-checkpoint");

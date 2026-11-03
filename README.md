@@ -1,5 +1,8 @@
 # Wonderbox
 
+[Play Wonderbox](https://wonderbox-three.vercel.app) · [GitHub](https://github.com/timothynice/wonderbox)
+
+
 **Imagine it. Make it. Play it.**
 
 An original 2D game playground. Play Moonlight Garden, pause, select an object, change its properties or ask the creative partner, then play the result. Direct edits and model proposals use one Agent-Native transaction action.

@@ -17,6 +17,8 @@ export default defineConfig({
     viewport: { width: 1440, height: 900 },
     browserName: "chromium",
     channel: process.env.PW_CHANNEL || "chromium",
+    // Hosted Linux runners have no GPU. Exercise Phaser's real Canvas fallback there.
+    launchOptions: process.env.PW_CANVAS === "1" ? { args: ["--disable-webgl"] } : undefined,
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
   },
