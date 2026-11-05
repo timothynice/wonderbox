@@ -107,7 +107,7 @@ Do not put provider keys in Vite variables, client bundles, JSON exports, or git
 
 ## Current limits
 
-- New live AI artwork verification is blocked by provider HTTP402 (depleted credits). Restore credits before rehearsing the live artwork demo. Direct artwork editing and phone sharing work without model credits; fixture tests do not establish live model availability.
+- Live Gemini artwork verification passed after credits were restored: character artwork+float, world themes/terrain, moonlight, manual-state context and Undo. Two combined world requests omitted lighting despite their summary; a separate moonlight request succeeded. Review actual preview differences. See [live evidence](docs/evidence/live-artwork-verification.json). Direct artwork editing and phone sharing require no model credits.
 - QR play is browser-based, with explicit snapshot updates; there are no accounts, automatic editor sync or native app. Create phone links from the hosted editor: localhost links only work on the same computer.
 - Touch-emulated Chromium portrait/landscape is tested; physical-device/Safari testing remains yours. Desktop remains the primary creation experience.
 - Owner update/revoke permission lives in this browser’s localStorage. Revocation prevents future loads but cannot erase copies already loaded. Expiry blocks reads after seven days; expired objects are removed on their next read, with no scheduled storage sweeper. Rate limits are process-local, not global quotas.
