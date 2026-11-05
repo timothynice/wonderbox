@@ -7,7 +7,7 @@ import path from "node:path";
 
 const shareDirectory = mkdtempSync(path.join(tmpdir(), "wonderbox-e2e-shares-"));
 process.env.SHARE_DIRECTORY = shareDirectory;
-for (const name of ["BLOB_READ_WRITE_TOKEN", "BLOB_STORE_ID", "VERCEL", "AI_ACCESS_CODE"]) delete process.env[name];
+for (const name of ["BLOB_READ_WRITE_TOKEN", "BLOB_STORE_ID", "VERCEL", "AI_ACCESS_CODE", "AI_PUBLIC_UNTIL"]) delete process.env[name];
 process.once("exit", () => rmSync(shareDirectory, {recursive:true,force:true}));
 import type { Action } from "../../src/shared/actions";
 import type { Project } from "../../src/shared/model";

@@ -156,3 +156,7 @@ The final **2:38 uncut1440×900 rehearsal** is `output/playwright/wonderbox-impr
 Use `output/playwright/wonderbox-checked-step-release.webm` for the updated local **2:00,1440×900** actual-app take. Both real Gemini requests used one proposal each, including the checked terrain request grounded in shared mechanical options. It shows float and Practice spring play, manual state preservation, preview/Apply, labeled runtime input replay and Undo. It is silent/captioned and Chromium-decoded. The last intro-spacing improvement is tested separately in screenshots. Older captures remain historical evidence. Public Clips publication and signed-out link verification remain user actions.
 
 If the agent exhausts its bounded search during a fresh rehearsal, use explicit Retry or the clearly labeled direct mechanical `Preview a checked step` alternative. Never describe that direct tool as a live model response.
+
+## Public judging access
+
+Production AI needs no access code through November14,2026. At November15 midnight Pacific (`2026-11-15T08:00:00Z`), the server automatically restores the retained access-code requirement. Preview deployments stay protected. The owner’s existing provider usage cap remains in effect; no extra application spending limiter was added. Judges can open the production URL and use the creative partner directly.

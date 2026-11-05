@@ -10,12 +10,13 @@ import inspectProject from '../actions/inspect-project.js';
 import previewTransaction from '../actions/preview-transaction.js';
 import checkReachability from '../actions/check-reachability.js';
 import { createShareRouter } from "./sharing.js";
+import { publicAiEnabled } from "./access.js";
 import planStaticStep from '../actions/plan-static-step.js';
 
 export const app = express();
 app.disable("x-powered-by");
 app.use(express.json({ limit: "2mb" }));
-// The release is a local, account-free editor. Do not expose a credentialed server publicly without access control.
+// Exact origin checks complement the server-side AI access policy below.
 app.use("/api", (req, res, next) => {
   const origin = req.get("origin");
   if (origin) {
@@ -47,7 +48,7 @@ app.get("/api/health", (_req, res) => {
   res.json({
     ok: true,
     configured: Boolean(config.apiKey),
-    accessCodeRequired: Boolean(process.env.AI_ACCESS_CODE),
+    accessCodeRequired: !publicAiEnabled() && Boolean(process.env.AI_ACCESS_CODE),
     provider: config.provider,
     model: config.model,
     framework: "@agent-native/core",
@@ -82,11 +83,11 @@ let inFlight = 0;
 app.post("/api/agent", async (req, res) => {
   const accessCode = process.env.AI_ACCESS_CODE;
   const supplied = req.get("x-wonderbox-access-code") || "";
-  if (accessCode && (Buffer.byteLength(supplied) !== Buffer.byteLength(accessCode) || !timingSafeEqual(Buffer.from(supplied), Buffer.from(accessCode)))) {
+  if (!publicAiEnabled() && accessCode && (Buffer.byteLength(supplied) !== Buffer.byteLength(accessCode) || !timingSafeEqual(Buffer.from(supplied), Buffer.from(accessCode)))) {
     res.status(401).json({ error: "Enter the shared AI access code in the creative partner panel. Nothing changed." });
     return;
   }
-  if (process.env.VERCEL && !accessCode) {
+  if (!publicAiEnabled() && process.env.VERCEL && !accessCode) {
     res.status(503).json({ error: "The hosted AI is waiting for its access code configuration. Direct editing remains available." });
     return;
   }
