@@ -1,6 +1,6 @@
 import { defineAction } from '@agent-native/core/action';
 import { z } from 'zod';
-import { projectSchema, behaviorSchema } from '../src/shared/model.js';
+import { projectSchema, behaviorSchema, appearanceSchema, worldSchema } from '../src/shared/model.js';
 
 export const inspectProjectInput = z.object({
   project: projectSchema,
@@ -24,6 +24,8 @@ export default defineAction({
     lockedIds: project.entities.filter(e => e.locked).map(e => e.id),
     counts: { entities: project.entities.length, terrain: project.terrain.length, stars: project.entities.filter(e => e.kind === 'star').length },
     supportedComponents: z.toJSONSchema(behaviorSchema),
-    limitations: ['Authored state only; transient runtime positions are excluded.', 'Reachability checks are bounded static-terrain mechanical searches, not proof of human completion.'],
+    supportedAppearance: z.toJSONSchema(appearanceSchema),
+    supportedWorldSettings: z.toJSONSchema(worldSchema),
+    limitations: ['Authored state only; transient runtime positions are excluded.', 'Artwork is original procedural customization with palettes, silhouettes, patterns and exact colors; arbitrary generated images, URLs, spritesheets and executable drawing code are unsupported.', 'Reachability checks are bounded static-terrain mechanical searches, not proof of human completion.'],
   }),
 });

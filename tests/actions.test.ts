@@ -188,6 +188,7 @@ describe("canonical project and atomic edits", () => {
       patrolSpeed: 73,
     });
     expect(p.world).toEqual({
+      ...createStarterProject().world,
       width: 3400,
       height: 800,
       gravity: 1700,

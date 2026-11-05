@@ -36,3 +36,7 @@ Implementation and review used AI coding assistance, official documentation, aut
 Practice puff, teaching-encounter placement, throwable handles, landing/collection/transformation/light-response feedback, preview marks and route overlays are original procedural project work. No new external artwork or audio libraries were introduced. Updated dependency overrides and compatibility boundaries are documented in DEPENDENCY-REVIEW.md. Captioned local recordings use actual application footage and real provider requests; no synthetic narration was substituted when local Voicebox was unavailable.
 
 The bounded geometric step planner and dependency policy are new original application code. No new runtime libraries or third-party assets were added in this follow-up.
+
+## Artwork and phone expansion
+
+New palettes, editable colors, silhouettes, patterns, accessories, theme miniatures and world/terrain variations are original procedural artwork. No external image-generation service or imported art was added. `qrcode` (MIT, https://github.com/soldair/node-qrcode) generates play-link QR codes; `@vercel/blob` (Apache-2.0, https://github.com/vercel/storage) stores private authored snapshots. Provider-fixture tests are labeled and are not actual model responses. The CLI-config override keeps this new dependency chain on its patched compatible release; the existing AG-UI nested Zod exception remains unchanged.

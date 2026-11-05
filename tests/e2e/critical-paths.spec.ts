@@ -187,8 +187,8 @@ test("1. play → pause → resume, interact, checkpoint and gated victory witho
   expect((await state(page)).checkpoint).toBe(null);
 });
 
-test("2. direct creation, undo/redo, export/import, reload and typing isolation", async ({
-  page,
+test("2. direct creation, artwork, persistence and QR phone versions with real touch controls", async ({
+  page, browser,
 }) => {
   await button(page, "Edit").click();
   const original = await project(page);
@@ -245,6 +245,39 @@ test("2. direct creation, undo/redo, export/import, reload and typing isolation"
   await selectPlayer(page);
   await number(page, "Float duration (s)", "0.6");
   expect((await player(page)).behaviors.floatSeconds).toBe(0.6);
+  // Real inspector controls use the same artwork transaction boundary as AI.
+  const beforeArtwork = await project(page), pausedArtwork = await state(page);
+  await page.locator('.entity-artwork summary').click();
+  await button(page, "Appearance palette lavender").click();
+  await expect.poll(async () => (await player(page)).appearance.palette).toBe('lavender');
+  await page.getByLabel('Appearance silhouette',{exact:true}).selectOption('round');
+  await expect.poll(async () => (await player(page)).appearance.variant).toBe('round');
+  await page.getByLabel('Appearance pattern',{exact:true}).selectOption('stripes');
+  await expect.poll(async () => (await player(page)).appearance.pattern).toBe('stripes');
+  await page.getByLabel('Appearance accessory',{exact:true}).selectOption('scarf');
+  await expect.poll(async () => (await player(page)).appearance.accessory).toBe('scarf');
+  await page.getByLabel('Primary color hex',{exact:true}).fill('#bf9aee');
+  await page.getByLabel('Primary color hex',{exact:true}).press('Tab');
+  await expect.poll(async () => (await player(page)).appearance.primaryColor).toBe('#bf9aee');
+  await button(page, "Undo (⌘Z)").click();
+  await expect.poll(async () => (await player(page)).appearance.primaryColor).toBe(null);
+  await button(page, "Redo (⌘⇧Z)").click();
+  await expect.poll(async () => (await player(page)).appearance.primaryColor).toBe('#bf9aee');
+  const validColorRevision = (await project(page)).revision;
+  await page.getByLabel('Primary color hex',{exact:true}).fill('#bad');
+  await page.getByLabel('Primary color hex',{exact:true}).press('Tab');
+  await expect(page.getByLabel('Primary color hex',{exact:true})).toHaveValue('#bf9aee');
+  expect((await project(page)).revision).toBe(validColorRevision);
+  await button(page, 'Art direction').click();
+  await page.getByRole('button',{name:/Amber Orchard/}).click();
+  await expect.poll(async () => (await project(page)).world.theme).toBe('autumn');
+  await page.getByLabel('Terrain finish',{exact:true}).selectOption('crystal');
+  await expect.poll(async () => (await project(page)).world.terrainStyle).toBe('crystal');
+  await button(page, 'Back to my world').click();
+  expect((await state(page)).player).toEqual(pausedArtwork.player);
+  expect((await state(page)).cameraX).toBe(pausedArtwork.cameraX);
+  expect((await project(page)).terrain).toEqual(beforeArtwork.terrain);
+  expect((await player(page)).behaviors).toEqual(beforeArtwork.entities.find(e=>e.id==='pip')!.behaviors);
   const saved = await project(page);
   const downloadPromise = page.waitForEvent("download");
   await button(page, "Export project JSON").click();
@@ -274,6 +307,11 @@ test("2. direct creation, undo/redo, export/import, reload and typing isolation"
     ),
   ).toBeVisible();
   expect(await project(page)).toEqual(restored);
+  const invalidArtwork = structuredClone(restored) as any;
+  invalidArtwork.entities[0].appearance.primaryColor = 'unbounded-css-or-url';
+  await page.locator('input[type=file]').setInputFiles({name:'invalid-artwork.json',mimeType:'application/json',buffer:Buffer.from(JSON.stringify(invalidArtwork))});
+  await expect(page.getByText('Import rejected. Use a valid Wonderbox v1 project under 2 MB. Your garden is unchanged.',{exact:true})).toBeVisible();
+  expect(await project(page)).toEqual(restored);
   await button(page, "Play").click();
   // A key held BEFORE form focus must also be ignored.
   await page.keyboard.down("KeyD");
@@ -285,12 +323,113 @@ test("2. direct creation, undo/redo, export/import, reload and typing isolation"
   await page.waitForTimeout(250);
   await page.keyboard.up("KeyD");
   expect(Math.abs((await state(page)).player.x - before.x)).toBeLessThan(1);
+
+  // Sharing uses actual UI + persisted server snapshots, not a browser-local fixture.
+  await button(page, 'Play on phone').click();
+  await button(page, 'Create play link & QR code').click();
+  const link = page.getByRole('textbox',{name:'Phone play link',exact:true});
+  await expect(link).toHaveValue(/\/play\/[a-f0-9]{40}$/);
+  const playUrl = await link.inputValue();
+  await expect(page.getByRole('img',{name:/QR code to play/})).toBeVisible();
+  const shared = await project(page);
+  const phoneContext = await browser.newContext({viewport:{width:390,height:844},hasTouch:true,isMobile:true});
+  const phone = await phoneContext.newPage(); const phoneErrors: string[] = [];
+  phone.on('pageerror', error => phoneErrors.push(error.message));
+  const phoneProject = (): Promise<Project> => phone.evaluate(() => (window as any).__wonderboxPhone.getProject());
+  const phoneState = () => phone.evaluate(() => (window as any).__wonderboxPhone.getDebugState());
+  try {
+    await phone.goto(playUrl);
+    await phone.waitForFunction(() => (window as any).__wonderboxPhone?.getDebugState()?.player);
+    expect(await phoneProject()).toEqual(shared);
+    await expect(phone.getByText('PLAY VERSION 1',{exact:true})).toBeVisible();
+    expect(await phone.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    // Chrome touch dispatch enters the real browser pointer/control handlers; no runtime setters.
+    const cdp = await phoneContext.newCDPSession(phone);
+    const right = (await phone.getByRole('button',{name:'Move right',exact:true}).boundingBox())!;
+    const jump = (await phone.getByRole('button',{name:'Jump',exact:true}).boundingBox())!;
+    const rightPoint = {x:right.x+right.width/2,y:right.y+right.height/2,id:1};
+    const jumpPoint = {x:jump.x+jump.width/2,y:jump.y+jump.height/2,id:2};
+    const start = await phoneState();
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[rightPoint]});
+    await phone.waitForFunction(x => (window as any).__wonderboxPhone.getDebugState().player.x > x+30, start.player.x, {timeout:8000,polling:'raf'});
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[rightPoint,jumpPoint]});
+    await phone.waitForFunction(() => (window as any).__wonderboxPhone.getDebugState().player.y < 510, null, {timeout:8000,polling:'raf'});
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    await phone.getByRole('button',{name:'Restart shared level',exact:true}).tap();
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[rightPoint]});
+    await phone.waitForFunction(() => (window as any).__wonderboxPhone.getDebugState().player.x > 165, null, {timeout:8000,polling:'raf'});
+    await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
+    await phone.getByRole('button',{name:'Pick up or throw',exact:true}).tap();
+    await expect.poll(async () => (await phoneState()).carrying).not.toBe(null);
+    await phone.getByRole('button',{name:'Pick up or throw',exact:true}).tap();
+    await expect.poll(async () => (await phoneState()).carrying).toBe(null);
+    await phone.getByRole('button',{name:'Pause game',exact:true}).tap();
+    const pausedPhone = await phoneState();
+    await phone.waitForTimeout(200);
+    expect((await phoneState()).player).toEqual(pausedPhone.player);
+    expect(await phoneProject()).toEqual(shared);
+
+    // A desktop edit remains private until Send, and a sent version never replaces a live run.
+    await button(page,'Close phone sharing').click();
+    await selectPlayer(page);
+    if (!(await page.locator('.entity-artwork').evaluate(element => (element as HTMLDetailsElement).open))) await page.locator('.entity-artwork summary').click();
+    await button(page,'Appearance palette gold').click();
+    await expect.poll(async () => (await player(page)).appearance.palette).toBe('gold');
+    const latest = await project(page);
+    expect((await phoneProject()).entities.find(e=>e.id==='pip')!.appearance.palette).toBe(shared.entities.find(e=>e.id==='pip')!.appearance.palette);
+    await button(page,'Play on phone').click();
+    await expect(button(page,'Send latest version')).toBeEnabled();
+    await button(page,'Send latest version').click();
+    await expect(page.getByText(/Sent v2 · editor/)).toBeVisible();
+    await expect(phone.getByRole('button',{name:'Restart with latest',exact:true})).toBeVisible({timeout:12000});
+    expect(await phoneProject()).toEqual(shared);
+    expect((await phoneState()).player).toEqual(pausedPhone.player);
+    await phone.getByRole('button',{name:'Restart with latest',exact:true}).tap();
+    await expect(phone.getByText('PLAY VERSION 2',{exact:true})).toBeVisible();
+    await phone.waitForFunction(() => (window as any).__wonderboxPhone?.getVersion()===2 && (window as any).__wonderboxPhone?.getDebugState()?.player);
+    expect(await phoneProject()).toEqual(latest);
+    expect((await phoneState()).player.x).toBe(latest.entities.find(e=>e.kind==='player')!.x);
+    expect(await project(page)).toEqual(latest);
+
+    await button(page,'Revoke play link').click();
+    await expect(page.getByText('Play link revoked. Previously loaded copies cannot be recalled.',{exact:true})).toBeVisible();
+    const fresh = await phoneContext.newPage();
+    await fresh.goto(playUrl);
+    await expect(fresh.getByRole('heading',{name:'This world needs a new link.',exact:true})).toBeVisible();
+    await expect(fresh.getByRole('alert')).toContainText('expired or was revoked');
+    expect(await fresh.locator('.phone-stage canvas').count()).toBe(0);
+    expect(await phoneProject()).toEqual(latest); // A loaded copy can continue; revocation is not remote erasure.
+    expect(phoneErrors).toEqual([]);
+    await fresh.close();
+  } finally {await phoneContext.close();}
 });
 
 test("3. AI shared actions: focused edit, locks, preview, undo, current context, stale response and failure rollback", async ({
   page,
 }) => {
   await selectPlayer(page);
+  const artBase = await project(page), artRuntime = await state(page);
+  await ask(page, 'TEST: art direction');
+  await expect(button(page,'Apply changes')).toBeVisible();
+  await expect(page.locator('.preview')).toContainText('Art palette: original → lavender');
+  await expect(page.locator('.preview')).toContainText('World theme: garden → autumn');
+  expect(await project(page)).toEqual(artBase);
+  await button(page,'Apply changes').click();
+  await expect.poll(async () => (await player(page)).appearance.palette).toBe('lavender');
+  expect((await player(page)).appearance).toMatchObject({variant:'round',pattern:'spots',accessory:'scarf'});
+  expect((await project(page)).world).toMatchObject({theme:'autumn',terrainStyle:'crystal'});
+  expect((await state(page)).player).toEqual(artRuntime.player);
+  expect((await project(page)).terrain).toEqual(artBase.terrain);
+  expect((await player(page)).behaviors).toEqual(artBase.entities.find(e=>e.id==='pip')!.behaviors);
+  await button(page,'Undo (⌘Z)').click();
+  await expect.poll(async () => (await player(page)).appearance.palette).toBe('original');
+  expect((await project(page)).world.theme).toBe('garden');
+  await page.locator('.entity-artwork summary').click();
+  await button(page,'Appearance palette coral').click();
+  await expect.poll(async () => (await player(page)).appearance.palette).toBe('coral');
+  await ask(page,'TEST: read current artwork');
+  await expect(page.locator('.chat.agent').last()).toContainText('TEST FIXTURE: current palette coral; theme garden; selection pip; recent edits');
+  await button(page,'Undo (⌘Z)').click();
   await ask(page, "TEST: float");
   expect((await player(page)).behaviors.floatSeconds).toBe(0.8);
   await button(page, "Undo (⌘Z)").click();
@@ -307,6 +446,8 @@ test("3. AI shared actions: focused edit, locks, preview, undo, current context,
   await revisionAfter(page, revision);
   const locked = await project(page);
   await ask(page, "TEST: float");
+  expect(await project(page)).toEqual(locked);
+  await ask(page, 'TEST: art direction');
   expect(await project(page)).toEqual(locked);
   await expect(
     page

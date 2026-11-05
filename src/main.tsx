@@ -29,6 +29,8 @@ import {
   Check,
   Volume2,
   VolumeX,
+  Palette as PaletteIcon,
+  Smartphone,
 } from "lucide-react";
 import { ProjectHistory, loadProject, saveProject } from "./shared/history";
 import {
@@ -92,6 +94,9 @@ function RouteEvidence({
   );
 }
 import "./style.css";
+import { EntityArtworkControls, ArtDirectionDialog } from "./editor/ArtworkControls";
+import {SharePanel} from "./phone/SharePanel";
+import {PhonePlayer} from "./phone/PhonePlayer";
 
 const palette = [
   { kind: "select", icon: MousePointer2, label: "Select" },
@@ -161,6 +166,8 @@ function App() {
         return true;
       }
     });
+  const [artOpen, setArtOpen] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
   const [accessCodeRequired, setAccessCodeRequired] = useState(false);
   const [accessCode, setAccessCode] = useState("");
   const host = useRef<HTMLDivElement>(null),
@@ -720,6 +727,7 @@ function App() {
             : "Make a little change. See what happens."}
         </span>
         <div className="toolbar-right">
+          <button className="share-trigger" title="Play on phone" aria-label="Play on phone" onClick={()=>{setMode("edit");setShareOpen(true);}}><Smartphone size={16}/><span>Play on phone</span></button>
           <button
             title="Undo (⌘Z)"
             disabled={!history.canUndo || busy}
@@ -985,6 +993,7 @@ function App() {
             >
               ☾ Moonlight
             </button>
+            <button className="art-direction-button" onClick={()=>{setMode("edit");setArtOpen(true);}}><PaletteIcon size={14}/>Art direction</button>
             <span className="settings-note">Imagine it. Make it. Play it.</span>
           </div>
         </section>
@@ -1186,6 +1195,7 @@ function App() {
                   {selectedEntity.kind === "exit" &&
                     field("Stars to unlock", "requiredStars", 0, 30)}
                 </div>
+                <EntityArtworkControls entity={selectedEntity} commit={commit} busy={busy}/>
                 <label className="toggle lock">
                   <span>
                     <LockKeyhole size={13} />
@@ -1546,6 +1556,8 @@ function App() {
           e.target.value = "";
         }}
       />
+      {shareOpen && <SharePanel key={project.id} project={project} onClose={()=>setShareOpen(false)}/>}
+      {artOpen && <ArtDirectionDialog project={project} commit={commit} busy={busy} onClose={()=>setArtOpen(false)} onAsk={text=>void ask(text)}/>}
       {confirmReset && (
         <div className="modal-backdrop">
           <div
@@ -1587,5 +1599,6 @@ function App() {
   );
 }
 const root = createRoot(document.getElementById("root")!);
-root.render(<App />);
+const phoneRoute = location.pathname.match(/^\/play\/([^/]+)\/?$/);
+root.render(phoneRoute ? <PhonePlayer shareId={phoneRoute[1]}/> : <App />);
 if (import.meta.hot) import.meta.hot.dispose(() => root.unmount());

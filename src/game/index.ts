@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import { entityInk, worldArt } from "./art.js";
 import type { Project, Entity, Terrain } from "../shared/model.js";
 import {
   deriveEditImpact,
@@ -34,6 +35,7 @@ export type GameStatus = {
   carrying: string | null;
   message: string;
 };
+export type TouchInput = { left?: boolean; right?: boolean; jump?: boolean; interact?: boolean };
 export type GameCallbacks = {
   onSelect?: (id: string | null) => void;
   onMove?: (id: string, x: number, y: number) => void;
@@ -113,6 +115,7 @@ export function mountGame(
     player!: Live;
     keys = new Set<string>();
     pressed = new Set<string>();
+    touchKeys = new Set<string>();
     elapsed = 0;
     accumulator = 0;
     coyote = 0;
@@ -177,6 +180,7 @@ export function mountGame(
       window.addEventListener("keydown", this.keyDown);
       window.addEventListener("keyup", this.keyUp);
       window.addEventListener("blur", this.blur);
+      document.addEventListener("visibilitychange", this.visibilityChange);
       this.input.on("pointerdown", this.pointerDown);
       this.input.on("pointermove", this.pointerMove);
       this.input.on("pointerup", this.pointerUp);
@@ -195,6 +199,8 @@ export function mountGame(
         window.removeEventListener("keydown", this.keyDown);
         window.removeEventListener("keyup", this.keyUp);
         window.removeEventListener("blur", this.blur);
+        document.removeEventListener("visibilitychange", this.visibilityChange);
+        this.releaseTouch();
         void this.audio?.close();
       });
     }
@@ -214,13 +220,34 @@ export function mountGame(
       this.keys.add(e.code);
       if (e.code === "Escape") {
         this.keys.clear();
+        this.releaseTouch();
         callbacks.onPause?.();
       }
     };
     keyUp = (e: KeyboardEvent) => {
       this.keys.delete(e.code);
     };
+    visibilityChange = () => { if (document.hidden) this.blur(); };
+    releaseTouch() {
+      this.touchKeys.clear();
+      this.pressed.delete("TouchJump");
+      this.pressed.delete("TouchInteract");
+    }
+    setTouch(input: TouchInput) {
+      if (mode !== "play" || isTyping() || document.hidden) { this.releaseTouch(); return; }
+      if (this.replay) this.cancelReplay();
+      for (const [key, down] of [["left", input.left], ["right", input.right], ["jump", input.jump], ["interact", input.interact]] as const) {
+        if (down) {
+          if (!this.touchKeys.has(key)) {
+            if (key === "jump") this.pressed.add("TouchJump");
+            if (key === "interact") this.pressed.add("TouchInteract");
+          }
+          this.touchKeys.add(key);
+        } else this.touchKeys.delete(key);
+      }
+    }
     blur = () => {
+      this.releaseTouch();
       this.keys.clear();
       this.pressed.clear();
       this.buffer = 0;
@@ -387,6 +414,7 @@ export function mountGame(
         this.replay = null;
         this.lastReplayResult = "cancelled";
         this.keys.clear();
+        this.releaseTouch();
         this.pressed.clear();
         this.buffer = 0;
       }
@@ -456,6 +484,7 @@ export function mountGame(
       this.lastReplayResult = reached ? "reached" : "missed";
       mode = "edit";
       this.keys.clear();
+      this.releaseTouch();
       this.pressed.clear();
       this.buffer = 0;
       callbacks.onPause?.();
@@ -496,6 +525,7 @@ export function mountGame(
           live.name = authored.name;
           live.locked = authored.locked;
           live.behaviors = structuredClone(authored.behaviors);
+          live.appearance = structuredClone(authored.appearance);
         }
       }
       if (this.carrying) {
@@ -521,6 +551,7 @@ export function mountGame(
       )
         this.won = false;
       this.keys.clear();
+      this.releaseTouch();
       this.pressed.clear();
       this.buffer = 0;
       for (const id of impact.affectedIds)
@@ -583,6 +614,7 @@ export function mountGame(
       this.jumpCanCut = false;
       this.invulnerable = 1;
       this.keys.clear();
+      this.releaseTouch();
       this.pressed.clear();
       this.publish();
     }
@@ -680,6 +712,7 @@ export function mountGame(
       if (isTyping()) {
         this.cancelReplay();
         this.keys.clear();
+        this.releaseTouch();
         this.pressed.clear();
         this.buffer = 0;
       }
@@ -687,12 +720,13 @@ export function mountGame(
       if (mode === "play" && !this.won) this.elapsed += dt;
       if (mode === "play" && !this.won) {
         if (
+          this.pressed.has("TouchJump") ||
           this.pressed.has("Space") ||
           this.pressed.has("ArrowUp") ||
           this.pressed.has("KeyW")
         )
           this.buffer = 0.14;
-        if (this.pressed.has("KeyE")) this.interact();
+        if (this.pressed.has("KeyE") || this.pressed.has("TouchInteract")) this.interact();
         this.accumulator += dt;
         while (this.accumulator >= 1 / 120 && mode === "play" && !this.won) {
           this.step(1 / 120);
@@ -739,12 +773,12 @@ export function mountGame(
       const replayInput = this.replay?.inputs[this.replay.index];
       const dir =
         replayInput?.direction ??
-        (this.keys.has("KeyD") || this.keys.has("ArrowRight") ? 1 : 0) -
-          (this.keys.has("KeyA") || this.keys.has("ArrowLeft") ? 1 : 0);
+        (this.touchKeys.has("right") || this.keys.has("KeyD") || this.keys.has("ArrowRight") ? 1 : 0) -
+          (this.touchKeys.has("left") || this.keys.has("KeyA") || this.keys.has("ArrowLeft") ? 1 : 0);
       if (dir) this.facing = dir;
       const held =
         replayInput?.jumpHeld ??
-        (this.keys.has("Space") ||
+        (this.touchKeys.has("jump") || this.keys.has("Space") ||
           this.keys.has("ArrowUp") ||
           this.keys.has("KeyW"));
       const { oldY, jumped } = stepPlayerMotion(
@@ -936,29 +970,41 @@ export function mountGame(
       const z = this.scale.height / 720,
         w = this.viewWidth(),
         moon = project.world.atmosphere === "moonlight",
-        ambience = reducedMotion ? 0 : this.elapsed;
+        ambience = reducedMotion ? 0 : this.elapsed,
+        art = worldArt(project.world.theme, moon),
+        foliage = project.world.foliageDensity,
+        starDensity = project.world.starDensity;
       this.cameras.main.setZoom(z);
       this.cameras.main.setScroll(
         this.cameraX + (w - this.scale.width) / 2,
         (720 - this.scale.height) / 2,
       );
       // Layered garden, drawn in world coordinates for crisp original vector artwork.
-      g.fillStyle(moon ? 0x142e43 : 0x9ac7b3);
+      g.fillStyle(art.sky);
       g.fillRect(this.cameraX, 0, w, 720);
       for (let band = 0; band < 7; band++) {
-        g.fillStyle(moon ? 0x213d51 : 0xd7dec1, (1 - band / 7) * 0.08);
+        g.fillStyle(art.skyBand, (1 - band / 7) * 0.08);
         g.fillRect(this.cameraX, band * 80, w, 80);
       }
       const celestialX = this.cameraX + w * 0.78;
       g.fillStyle(moon ? 0xc9e9cb : 0xf6e7ad, 0.08);
       g.fillCircle(celestialX, 115, 110);
-      g.fillStyle(moon ? 0xe9f4d3 : 0xffecbc, 0.95);
+      g.fillStyle(art.celestial, 0.95);
       g.fillCircle(celestialX, 115, 42);
       if (moon) {
-        g.fillStyle(0x244557);
+        g.fillStyle(art.moonShade);
         g.fillCircle(celestialX + 19, 98, 39);
       }
-      for (let i = 0; i < 70; i++) {
+      if (project.world.theme === "aurora") {
+        // Layered translucent northern ribbons, behind every piece of playable geometry.
+        for (let band = 0; band < 3; band++) {
+          g.lineStyle(18 + band * 13, [0x83dfb5, 0x8fc7e2, 0xb3a5e7][band], moon ? 0.095 : 0.055);
+          const points = [];
+          for (let i = 0; i <= 32; i++) points.push({x:this.cameraX + i * w / 32,y:70 + band * 39 + Math.sin(i * .19 + band + ambience * .05) * 38});
+          g.strokePoints(points, false);
+        }
+      }
+      for (let i = 0; i < Math.round(70 * starDensity); i++) {
         const x = (i * 137.7 + 17) % 4000,
           y = 30 + ((i * 79.3) % 390);
         g.fillStyle(
@@ -973,9 +1019,7 @@ export function mountGame(
           const x = i * 340 - this.cameraX * par,
             base = 590 + layer * 30,
             h = 260 + ((i * 73) % 150),
-            col = moon
-              ? [0x274d58, 0x25515b, 0x265b5b][layer]
-              : [0x7da99b, 0x659c8b, 0x4e8c7d][layer];
+            col = art.mountains[layer];
           g.fillStyle(col, 0.8);
           g.fillEllipse(x, base - h * 0.3, 190 + layer * 50, h);
           g.fillRect(x - 8, base - h * 0.25, 16, h * 0.5);
@@ -983,45 +1027,58 @@ export function mountGame(
         }
       }
       // Pale ribbon paths and flowering silhouettes give the world depth.
-      g.fillStyle(moon ? 0x426e6a : 0x9cbea0, 0.4);
+      g.fillStyle(art.path, 0.4);
       for (let i = 0; i < 12; i++)
         g.fillEllipse(i * 350 - this.cameraX * 0.3, 690, 540, 110);
       for (const t of project.terrain) {
-        g.fillStyle(0x263d43);
+        g.fillStyle(art.ground);
         g.fillRoundedRect(t.x, t.y, t.width, t.height, 10);
-        g.fillStyle(0x385554);
+        g.fillStyle(art.soil);
         g.fillRect(t.x + 2, t.y + 14, t.width - 4, Math.max(0, t.height - 16));
-        g.fillStyle(0x75a58c);
+        g.fillStyle(art.surface);
         g.fillRoundedRect(t.x, t.y, t.width, 13, 6);
-        g.fillStyle(0xa8c9a1);
+        g.fillStyle(art.shine);
         g.fillRect(t.x + 4, t.y + 1, t.width - 8, 3);
         for (let x = t.x + 12; x < t.x + t.width - 4; x += 34) {
-          g.lineStyle(2, 0x506d60, 0.7);
-          g.lineBetween(x, t.y + 18, x + 8, t.y + 35);
-          g.fillStyle(0x203d42, 0.35);
-          g.fillCircle(x + 12, t.y + 46, 3);
+          if (project.world.terrainStyle === "crystal") {
+            const depth = Math.min(32, Math.max(0, t.height - 18));
+            g.fillStyle(art.shine, .22);
+            g.fillTriangle(x, t.y + 16, Math.min(x + 25, t.x + t.width - 2), t.y + 16, x + 11, t.y + 16 + depth);
+            g.lineStyle(1, art.shine, .32);
+            g.lineBetween(x + 11, t.y + 16, x + 11, t.y + 16 + depth);
+          } else if (project.world.terrainStyle === "stone") {
+            g.lineStyle(2, art.ground, .55);
+            const depth = Math.min(21, Math.max(0, t.height - 18));
+            g.lineBetween(x, t.y + 15, x, t.y + 15 + depth);
+            g.lineBetween(x, t.y + 15 + depth, Math.min(x + 30, t.x + t.width - 3), t.y + 15 + depth);
+          } else {
+            g.lineStyle(2, 0x506d60, 0.7);
+            g.lineBetween(x, t.y + 18, x + 8, t.y + 35);
+            g.fillStyle(0x203d42, 0.35);
+            g.fillCircle(x + 12, t.y + 46, 3);
+          }
         }
-        for (let x = t.x + 15; x < t.x + t.width - 10; x += 49) {
-          g.lineStyle(2, 0x729d75);
+        for (let x = t.x + 15; foliage > 0 && x < t.x + t.width - 10; x += 49 / foliage) {
+          g.lineStyle(2, art.stem);
           g.lineBetween(x, t.y, x - 4, t.y - 7);
           g.lineBetween(x, t.y, x + 5, t.y - 10);
           if (Math.floor(x) % 3 === 0) {
-            g.fillStyle(0xe1b4b5);
+            g.fillStyle(art.flower);
             g.fillCircle(x + 5, t.y - 12, 3);
           }
         }
       }
       // Sprigs and clover near the foreground edge (deterministic, no external assets).
-      for (let i = 0; i < 100; i++) {
-        const x = 30 + i * 35,
+      for (let i = 0; i < Math.round(100 * foliage); i++) {
+        const x = 30 + i * 35 / foliage,
           t = project.terrain.find(
             (t) => x > t.x && x < t.x + t.width && t.y >= 580,
           );
         if (!t) continue;
         const y = t.y;
-        g.lineStyle(2, 0x83b28a, 0.8);
+        g.lineStyle(2, art.stem, 0.8);
         g.lineBetween(x, y, x + Math.sin(i) * 6, y - 18 - (i % 3) * 7);
-        g.fillStyle(i % 4 === 0 ? 0xd7a4bc : 0x6fa186);
+        g.fillStyle(i % 4 === 0 ? art.flower : art.leaf);
         g.fillEllipse(x - 5, y - 14, 12, 5);
         g.fillEllipse(x + 4, y - 22, 13, 6);
       }
@@ -1042,13 +1099,13 @@ export function mountGame(
         this.drawEntity(e, x, y);
       }
       // Fireflies drift independently of gameplay and never obscure collision geometry.
-      for (let i = 0; i < 23; i++) {
+      for (let i = 0; i < Math.round(23 * starDensity); i++) {
         const x =
             (i * 153 + Math.sin(ambience * 0.4 + i) * 18) % project.world.width,
           y = 250 + ((i * 59) % 320) + Math.sin(ambience + i) * 9;
         g.fillStyle(0xd7eeb4, 0.06);
         g.fillCircle(x, y, 12);
-        g.fillStyle(0xe8edaf, 0.35 + 0.2 * Math.sin(ambience * 2 + i));
+        g.fillStyle(art.glow, 0.35 + 0.2 * Math.sin(ambience * 2 + i));
         g.fillCircle(x, y, 2);
       }
       if (mode === "edit") {
@@ -1238,6 +1295,7 @@ export function mountGame(
       }
     }
     drawEntity(e: Entity & Partial<Live>, x: number, y: number) {
+      const ink = entityInk(e);
       const g = this.graphics,
         w = e.width,
         h = e.height,
@@ -1245,40 +1303,50 @@ export function mountGame(
         bob = mode === "play" && !reducedMotion ? Math.sin(t * 2 + e.x) * 3 : 0;
       if (e.behaviors.portableLight) {
         for (let i = 4; i > 0; i--) {
-          g.fillStyle(0xf5db86, 0.018);
+          g.fillStyle(ink(0xf5db86), 0.018);
           g.fillCircle(x + w / 2, y + h / 2, (e.behaviors.lightRadius * i) / 4);
         }
       }
       if (e.kind === "player") {
         const walking = mode === "play" && Math.abs(e.vx ?? 0) > 10,
           step = walking ? Math.sin(t * 18) * 4 : 0;
-        g.fillStyle(0x173a40, 0.24);
+        g.fillStyle(ink(0x173a40), 0.24);
         g.fillEllipse(x + w / 2, y + h + 3, w + 6, 9);
-        g.fillStyle(0x1f696d);
+        g.fillStyle(ink(0x1f696d));
         g.fillRoundedRect(x + 5, y + h - 13 + step, 12, 16, 5);
         g.fillRoundedRect(x + w - 17, y + h - 13 - step, 12, 16, 5);
-        g.fillStyle(0xb9ddbd);
-        g.fillRoundedRect(x + 4, y + 8, w - 8, h - 15, 15);
-        g.fillStyle(0x73bda5);
+        g.fillStyle(ink(0xb9ddbd));
+        g.fillRoundedRect(x + 4, y + 8, w - 8, h - 15, e.appearance.variant === "spiky" ? 7 : e.appearance.variant === "round" ? w / 2 : 15);
+        g.fillStyle(ink(0x73bda5));
         g.fillRoundedRect(x, y + 21, w, 28, 13);
-        g.fillStyle(0xb9ddbd);
-        g.fillEllipse(x + 10, y + 4, 11, 24);
-        g.fillEllipse(x + w - 10, y + 2, 10, 26);
-        g.fillStyle(0x8bb89f);
-        g.fillEllipse(x + 10, y + 3, 4, 13);
-        g.fillEllipse(x + w - 10, y + 1, 4, 15);
-        g.fillStyle(0xe5edc9);
+        g.fillStyle(ink(0xb9ddbd));
+        if (e.appearance.variant === "round") {
+          g.fillCircle(x + 8, y + 9, 10);
+          g.fillCircle(x + w - 8, y + 9, 10);
+          g.fillStyle(ink(0x8bb89f));
+          g.fillCircle(x + 8, y + 9, 5);
+          g.fillCircle(x + w - 8, y + 9, 5);
+        } else if (e.appearance.variant === "spiky") {
+          for (let i = 0; i < 4; i++) g.fillTriangle(x + 4 + i * (w - 8) / 4, y + 15, x + 8 + i * (w - 8) / 4, y - 9 - (i % 2) * 4, x + 15 + i * (w - 8) / 4, y + 15);
+        } else {
+          g.fillEllipse(x + 10, y + 4, 11, 24);
+          g.fillEllipse(x + w - 10, y + 2, 10, 26);
+          g.fillStyle(ink(0x8bb89f));
+          g.fillEllipse(x + 10, y + 3, 4, 13);
+          g.fillEllipse(x + w - 10, y + 1, 4, 15);
+        }
+        g.fillStyle(ink(0xe5edc9));
         g.fillEllipse(x + w / 2, y + 25, w - 10, 23);
         const f = mode === "play" ? this.facing : 1;
-        g.fillStyle(0x173f43);
+        g.fillStyle(ink(0x173f43));
         g.fillEllipse(x + w / 2 - 6 + f * 2, y + 23, 3.5, 6);
         g.fillEllipse(x + w / 2 + 7 + f * 2, y + 23, 3.5, 6);
-        g.fillStyle(0xe6a4a8);
+        g.fillStyle(ink(0xe6a4a8));
         g.fillEllipse(x + 8, y + 29, 6, 3);
         g.fillEllipse(x + w - 8, y + 29, 6, 3);
-        g.lineStyle(1.5, 0x326366);
+        g.lineStyle(1.5, ink(0x326366));
         g.lineBetween(x + w / 2 - 2, y + 30, x + w / 2 + 2, y + 30);
-        g.fillStyle(0xe5989c);
+        g.fillStyle(ink(0xe5989c));
         g.fillRoundedRect(x + 3, y + 35, w - 6, 7, 3);
         g.fillTriangle(
           x + 6,
@@ -1289,7 +1357,7 @@ export function mountGame(
           y + 48,
         );
         if (e.behaviors.floatSeconds > 0) {
-          g.fillStyle(0xe6edbd, 0.4);
+          g.fillStyle(ink(0xe6edbd), 0.4);
           g.fillEllipse(x + w / 2, y + h + 10, w + 18, 5);
           if (
             mode === "play" &&
@@ -1297,7 +1365,7 @@ export function mountGame(
             this.floatUsed < e.behaviors.floatSeconds
           ) {
             for (let i = 0; i < 5; i++) {
-              g.fillStyle(0xe5f9d0, 0.4);
+              g.fillStyle(ink(0xe5f9d0), 0.4);
               g.fillCircle(
                 x - 7 + i * 13,
                 y + h + 10 + Math.sin(t * 5 + i) * 5,
@@ -1307,32 +1375,32 @@ export function mountGame(
           }
         }
       } else if (e.kind === "plant") {
-        g.lineStyle(4, 0x73ac7b);
+        g.lineStyle(4, ink(0x73ac7b));
         g.lineBetween(x + w / 2, y + h - 10, x + w / 2, y + 7);
-        g.fillStyle(0x8fbd82);
+        g.fillStyle(ink(0x8fbd82));
         g.fillEllipse(x + w / 2 - 9, y + 14, 23, 10);
         g.fillEllipse(x + w / 2 + 7, y + 7, 20, 10);
-        g.fillStyle(e.behaviors.throwable ? 0xf4c587 : 0xca99b5);
+        g.fillStyle(ink(e.behaviors.throwable ? 0xf4c587 : 0xca99b5));
         g.fillRoundedRect(x + 3, y + h - 24, w - 6, 24, 9);
-        g.fillStyle(0xd99582);
+        g.fillStyle(ink(0xd99582));
         g.fillEllipse(x + w / 2, y + h - 20, w - 2, 9);
         if (e.behaviors.throwable) {
-          g.lineStyle(2, 0xffdfaa);
+          g.lineStyle(2, ink(0xffdfaa));
           g.strokeEllipse(x + 1, y + h - 14, 7, 10);
           g.strokeEllipse(x + w - 1, y + h - 14, 7, 10);
         }
-        g.fillStyle(0x493c48);
+        g.fillStyle(ink(0x493c48));
         g.fillCircle(x + w / 2 - 4, y + h - 12, 1.5);
         g.fillCircle(x + w / 2 + 4, y + h - 12, 1.5);
       } else if (e.kind === "enemy") {
         if (e.transformed) {
-          g.fillStyle(0x88d4a7);
+          g.fillStyle(ink(0x88d4a7));
           g.fillRoundedRect(x, y + 12, w, 15, 7);
-          g.fillStyle(0xe3b1cf);
+          g.fillStyle(ink(0xe3b1cf));
           g.fillEllipse(x + w / 2, y + 8 + Math.sin(t * 7) * 2, w + 7, 18);
-          g.fillStyle(0xffdfeb);
+          g.fillStyle(ink(0xffdfeb));
           g.fillEllipse(x + w / 2, y + 4, w - 7, 6);
-          g.lineStyle(2, 0x4b836b);
+          g.lineStyle(2, ink(0x4b836b));
           g.lineBetween(x + 10, y + 22, x + 14, y + 31);
           g.lineBetween(x + w - 10, y + 22, x + w - 14, y + 31);
         } else {
@@ -1343,67 +1411,72 @@ export function mountGame(
                 l.behaviors.portableLight &&
                 Math.hypot(l.x - x, l.y - y) < l.behaviors.lightRadius,
             );
-          g.fillStyle(0x1c3641, 0.25);
+          g.fillStyle(ink(0x1c3641), 0.25);
           g.fillEllipse(x + w / 2, y + h, w + 8, 8);
-          g.fillStyle(0x4a3d68);
+          g.fillStyle(ink(0x4a3d68));
           g.fillRoundedRect(x + 4, y + h - 8, w - 8, 10, 4);
-          g.fillStyle(afraid ? 0xaf91ca : 0x89749d);
-          g.fillRoundedRect(x, y + 8 + Math.sin(t * 5 + x) * 2, w, h - 12, 14);
-          g.fillStyle(0xaca0b9);
+          g.fillStyle(ink(afraid ? 0xaf91ca : 0x89749d));
+          g.fillRoundedRect(x, y + 8 + Math.sin(t * 5 + x) * 2, w, h - 12, e.appearance.variant === "round" ? w / 2 : e.appearance.variant === "spiky" ? 6 : 14);
+          if (e.appearance.variant === "spiky") for (let i = 0; i < 5; i++) g.fillTriangle(x + i * w / 5, y + 15, x + (i + .5) * w / 5, y - 3 - (i % 2) * 3, x + (i + 1) * w / 5, y + 15);
+          else if (e.appearance.variant === "round") {
+            g.fillCircle(x + 6, y + 9, 7);
+            g.fillCircle(x + w - 6, y + 9, 7);
+          }
+          g.fillStyle(ink(0xaca0b9));
           g.fillEllipse(x + w / 2, y + 12, w - 2, 18);
-          g.fillStyle(0xe6d6cb);
+          g.fillStyle(ink(0xe6d6cb));
           g.fillEllipse(x + w / 2 - 7, y + 24, 8, 10);
           g.fillEllipse(x + w / 2 + 7, y + 24, 8, 10);
-          g.fillStyle(0x342e46);
+          g.fillStyle(ink(0x342e46));
           g.fillCircle(x + w / 2 - 6 + (e.direction ?? 1) * 2, y + 25, 2);
           g.fillCircle(x + w / 2 + 8 + (e.direction ?? 1) * 2, y + 25, 2);
-          g.lineStyle(2, 0x4e4661);
+          g.lineStyle(2, ink(0x4e4661));
           if (!afraid) {
             g.lineBetween(x + 7, y + 16, x + 17, y + 20);
             g.lineBetween(x + w - 7, y + 16, x + w - 17, y + 20);
           }
           if (afraid) {
-            g.lineStyle(2, 0xe9d4f0, 0.8);
+            g.lineStyle(2, ink(0xe9d4f0), 0.8);
             g.lineBetween(x - 5, y + 6, x - 10, y);
             g.lineBetween(x + w + 5, y + 6, x + w + 10, y);
-            g.fillStyle(0xc5dfeb);
+            g.fillStyle(ink(0xc5dfeb));
             g.fillEllipse(x + w + 3, y + 17, 4, 7);
           }
-          g.fillStyle(0xc39fac);
+          g.fillStyle(ink(0xc39fac));
           g.fillEllipse(x + w / 2, y + 34, 8, afraid ? 7 : 3);
         }
       } else if (e.kind === "star") {
         const cy = y + h / 2 + bob;
-        g.fillStyle(0xffdf91, 0.06);
+        g.fillStyle(ink(0xffdf91), 0.06);
         g.fillCircle(x + w / 2, cy, 34);
-        g.fillStyle(0xffdc89, 0.12);
+        g.fillStyle(ink(0xffdc89), 0.12);
         g.fillCircle(x + w / 2, cy, 23);
         const pts = [];
         for (let i = 0; i < 10; i++) {
           const a = -Math.PI / 2 + (i * Math.PI) / 5,
-            r = i % 2 ? 7 : 16;
+            r = i % 2 ? (e.appearance.variant === "round" ? 11 : 7) : (e.appearance.variant === "spiky" ? 19 : 16);
           pts.push({ x: x + w / 2 + Math.cos(a) * r, y: cy + Math.sin(a) * r });
         }
-        g.fillStyle(0xffe4a4);
+        g.fillStyle(ink(0xffe4a4));
         g.fillPoints(pts, true);
-        g.fillStyle(0x976d64);
+        g.fillStyle(ink(0x976d64));
         g.fillCircle(x + w / 2 - 3, cy, 1.2);
         g.fillCircle(x + w / 2 + 3, cy, 1.2);
       } else if (e.kind === "platform") {
-        g.fillStyle(0x3a5f60);
+        g.fillStyle(ink(0x3a5f60));
         g.fillRoundedRect(x, y, w, h, 9);
-        g.fillStyle(0x87b6a6);
+        g.fillStyle(ink(0x87b6a6));
         g.fillRoundedRect(x, y, w, 9, 4);
-        g.lineStyle(2, 0xadcbb2, 0.7);
+        g.lineStyle(2, ink(0xadcbb2), 0.7);
         g.lineBetween(x + 12, y + 14, x + w - 12, y + 14);
-        g.fillStyle(0xc7b69f);
+        g.fillStyle(ink(0xc7b69f));
         g.fillCircle(x + 12, y + 16, 3);
         g.fillCircle(x + w - 12, y + 16, 3);
       } else if (e.kind === "checkpoint") {
         const active = this.checkpoint === e.id;
-        g.fillStyle(0x546b62);
+        g.fillStyle(ink(0x546b62));
         g.fillRoundedRect(x + w / 2 - 4, y + 4, 8, h - 4, 3);
-        g.fillStyle(active ? 0xe9db9b : 0x95bdab);
+        g.fillStyle(ink(active ? 0xe9db9b : 0x95bdab));
         g.fillTriangle(
           x + w / 2,
           y + 3,
@@ -1412,36 +1485,36 @@ export function mountGame(
           x + w / 2,
           y + 28,
         );
-        g.fillStyle(active ? 0xffe6a1 : 0x97b2a4);
+        g.fillStyle(ink(active ? 0xffe6a1 : 0x97b2a4));
         g.fillCircle(x + w / 2, y + 2, 6);
         if (active) {
-          g.fillStyle(0xffe9ad, 0.08);
+          g.fillStyle(ink(0xffe9ad), 0.08);
           g.fillCircle(x + w / 2, y + 2, 35);
         }
-        g.fillStyle(0x597c6c);
+        g.fillStyle(ink(0x597c6c));
         g.fillEllipse(x + w / 2, y + h, w, 10);
       } else if (e.kind === "lantern") {
-        g.lineStyle(3, 0xc3a77c);
+        g.lineStyle(3, ink(0xc3a77c));
         g.strokeCircle(x + w / 2, y + 7, 8);
-        g.fillStyle(0xdec998);
+        g.fillStyle(ink(0xdec998));
         g.fillRoundedRect(x + 4, y + 12, w - 8, h - 15, 5);
-        g.fillStyle(0xffe7a0);
+        g.fillStyle(ink(0xffe7a0));
         g.fillRect(x + 8, y + 17, w - 16, h - 25);
-        g.fillStyle(0x8b7663);
+        g.fillStyle(ink(0x8b7663));
         g.fillRect(x + 1, y + h - 8, w - 2, 6);
         g.fillRect(x + 1, y + 11, w - 2, 5);
       } else if (e.kind === "exit") {
         const open = this.stars.size >= e.behaviors.requiredStars;
-        g.fillStyle(0x203f43, 0.8);
+        g.fillStyle(ink(0x203f43), 0.8);
         g.fillRoundedRect(x, y, w, h, { tl: w / 2, tr: w / 2, bl: 4, br: 4 });
-        g.lineStyle(8, 0x92ae8e);
+        g.lineStyle(8, ink(0x92ae8e));
         g.strokeRoundedRect(x + 3, y + 3, w - 6, h - 6, {
           tl: w / 2,
           tr: w / 2,
           bl: 4,
           br: 4,
         });
-        g.fillStyle(open ? 0xecdca0 : 0x51736c, open ? 0.5 : 0.7);
+        g.fillStyle(ink(open ? 0xecdca0 : 0x51736c), open ? 0.5 : 0.7);
         g.fillRoundedRect(x + 12, y + 15, w - 24, h - 20, {
           tl: 25,
           tr: 25,
@@ -1449,15 +1522,15 @@ export function mountGame(
           br: 2,
         });
         if (!open) {
-          g.lineStyle(3, 0x9ab496);
+          g.lineStyle(3, ink(0x9ab496));
           for (let k = 1; k < 4; k++)
             g.lineBetween(x + (w * k) / 4, y + 22, x + (w * k) / 4, y + h - 5);
         } else {
-          g.fillStyle(0xffe5a9, 0.05);
+          g.fillStyle(ink(0xffe5a9), 0.05);
           g.fillCircle(x + w / 2, y + h / 2, 90);
         }
         for (let i = 0; i < e.behaviors.requiredStars; i++) {
-          g.fillStyle(i < this.stars.size ? 0xffdfa1 : 0x587c72);
+          g.fillStyle(ink(i < this.stars.size ? 0xffdfa1 : 0x587c72));
           g.fillCircle(
             x + w / 2 + (i - (e.behaviors.requiredStars - 1) / 2) * 16,
             y - 14,
@@ -1465,25 +1538,59 @@ export function mountGame(
           );
         }
       } else {
-        g.lineStyle(3, 0x78a388);
+        g.lineStyle(3, ink(0x78a388));
         g.lineBetween(x + w / 2, y + h, x + w / 2, y + 8);
-        g.fillStyle(0x8eb896);
+        g.fillStyle(ink(0x8eb896));
         g.fillEllipse(x + w / 2 - 8, y + h / 2, w * 0.8, 12);
         g.fillEllipse(x + w / 2 + 8, y + h / 2 - 13, w * 0.8, 12);
-        g.fillStyle(0xd7abc1);
+        g.fillStyle(ink(0xd7abc1));
         for (let i = 0; i < 5; i++)
           g.fillCircle(
             x + w / 2 + Math.cos(i * 1.256) * 8,
             y + 8 + Math.sin(i * 1.256) * 8,
             6,
           );
-        g.fillStyle(0xedd8a2);
+        g.fillStyle(ink(0xedd8a2));
         g.fillCircle(x + w / 2, y + 8, 5);
       }
+      const appearance = e.appearance;
+      if (appearance.variant === "spiky" && !["player", "enemy", "star"].includes(e.kind)) {
+        g.fillStyle(ink(0xd7abc1));
+        for (let i = 0; i < 3; i++) g.fillTriangle(x + w / 2 - 11 + i * 8, y + 12, x + w / 2 - 7 + i * 8, y - 3, x + w / 2 - 3 + i * 8, y + 12);
+      } else if (appearance.variant === "round" && !["player", "enemy", "star"].includes(e.kind)) {
+        g.lineStyle(2, ink(0xffdfaa), .6);
+        g.strokeEllipse(x + w / 2, y + h * .7, Math.max(8, w - 8), Math.min(18, h * .4));
+      }
+      // Patterns stay low on the body so eyes and interaction feedback remain readable.
+      if (appearance.pattern !== "plain") {
+        g.fillStyle(ink(0xffdfaa), .55);
+        g.lineStyle(2, ink(0xffdfaa), .5);
+        if (appearance.pattern === "spots") {
+          for (let i = 0; i < 3; i++) g.fillCircle(x + w * (.25 + i * .25), y + h * .76 + (i % 2 ? 4 : -1), Math.min(3, w / 14));
+        } else {
+          for (let i = 0; i < 3; i++) g.lineBetween(x + w * .22, y + h * .68 + i * 4, x + w * .78, y + h * .68 + i * 4);
+        }
+      }
+      if (appearance.accessory === "leaf") {
+        g.lineStyle(2, ink(0x73ac7b));
+        g.lineBetween(x + w / 2, y + 5, x + w / 2 + 3, y - 10);
+        g.fillStyle(ink(0x73bda5));
+        g.fillEllipse(x + w / 2 + 9, y - 9, 18, 8);
+        g.fillEllipse(x + w / 2 - 4, y - 5, 13, 7);
+      } else if (appearance.accessory === "crown") {
+        g.fillStyle(ink(0xffe7a0));
+        g.fillPoints([{x:x+w/2-13,y:y+4},{x:x+w/2-15,y:y-10},{x:x+w/2-5,y:y-5},{x:x+w/2,y:y-16},{x:x+w/2+6,y:y-5},{x:x+w/2+15,y:y-10},{x:x+w/2+13,y:y+4}],true);
+        g.fillStyle(ink(0xd7abc1));
+        g.fillCircle(x + w / 2, y - 4, 2);
+      } else if (appearance.accessory === "scarf") {
+        g.fillStyle(ink(0xe5989c));
+        g.fillRoundedRect(x + 1, y + h * .62, Math.max(8, w - 2), Math.max(5, h * .12), 3);
+        g.fillTriangle(x + w - 5, y + h * .68, x + w + 12, y + h * .8 + Math.sin(t * 4) * 2, x + w - 4, y + h * .85);
+      }
       if (mode === "edit" && e.locked) {
-        g.fillStyle(0xe9b777, 0.9);
+        g.fillStyle(ink(0xe9b777), 0.9);
         g.fillRoundedRect(x + w - 10, y - 4, 12, 10, 2);
-        g.lineStyle(2, 0xe9b777);
+        g.lineStyle(2, ink(0xe9b777));
         g.strokeCircle(x + w - 4, y - 5, 4);
       }
     }
@@ -1562,10 +1669,21 @@ export function mountGame(
       scene?.cancelReplay();
       mode = next;
       scene?.keys.clear();
+      scene?.releaseTouch();
       scene?.pressed.clear();
       if (scene) scene.buffer = 0;
       if (next === "edit")
         scene?.note("Select a little thing. Make it your own.");
+    },
+    setTouchInput(input: TouchInput) {
+      scene?.setTouch(input);
+    },
+    touchInteract() {
+      if (scene && mode === "play" && !isTyping() && !document.hidden) scene.pressed.add("TouchInteract");
+    },
+    releaseTouchInput() {
+      scene?.releaseTouch();
+      if (scene) scene.buffer = 0;
     },
     setMuted(next: boolean) {
       muted = next;
@@ -1606,6 +1724,7 @@ export function mountGame(
             health: scene.health,
             deaths: scene.deaths,
             carrying: scene.carrying,
+            touchInput: [...scene.touchKeys],
             floatUsed: scene.floatUsed,
             elapsed: scene.elapsed,
             previewVisible: !!preview,
@@ -1630,6 +1749,7 @@ export function mountGame(
               active: e.active,
               transformed: e.transformed,
               thrown: e.thrown,
+              appearance: structuredClone(e.appearance),
             })),
             stars: [...scene.stars],
             checkpoint: scene.checkpoint,
@@ -1639,6 +1759,7 @@ export function mountGame(
         : null;
     },
     destroy() {
+      scene?.blur();
       game.destroy(true);
     },
   };

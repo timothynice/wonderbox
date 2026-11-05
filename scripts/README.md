@@ -7,7 +7,7 @@ npx playwright install chromium --no-shell
 npm run test:critical
 ```
 
-Exactly three tests in `tests/e2e/critical-paths.spec.ts` exercise the production UI and actual API, using isolated browser contexts and ports4317/4318. The provider in `tests/e2e/server.ts` is a **test-only deterministic fixture**, never imported by the application. No API credits or real credentials are used. Gameplay uses an explicitly named imported diagnostic route after testing movement/jumping/pause in the original starter. This is a regression check, not live-AI or human play-study evidence.
+Exactly three tests in `tests/e2e/critical-paths.spec.ts` exercise the production UI and actual API, using isolated browser contexts and ports49117/49118. The provider in `tests/e2e/server.ts` is a **test-only deterministic fixture**, never imported by the application. No API credits or real credentials are used. Gameplay uses an explicitly named imported diagnostic route after testing movement/jumping/pause in the original starter. This is a regression check, not live-AI or human play-study evidence.
 
 Run `npm run test:critical:headed` to watch. `npx playwright show-report output/playwright/report` opens the report. Failure traces/screenshots live under `output/playwright/regression`; the runner also captures each final screen. The config refuses to reuse occupied test ports. The browser is Chromium; `PW_CHANNEL=chrome` optionally uses installed Google Chrome. The app is rebuilt by the npm scripts before tests, avoiding stale production assets.
 
@@ -46,3 +46,7 @@ The same three tests now protect safe-edit resume, pure visual previews and Disc
 GitHub CI runs the same three tests with `PW_CANVAS=1`, disabling browser WebGL so Phaser AUTO uses its real Canvas fallback on GPU-free Linux runners. Default local checks retain WebGL. No simulation or provider assertions are bypassed. The checkpoint route waits for landing before crossing its flag, avoiding airborne overshoot on slow renderers.
 
 For hosted live-provider callbacks, enter the owner-provided AI access code in the creative partner panel first. It clears on reload by design. Never paste a provider API key there or put either secret into callback source.
+
+## Artwork and phone expansion
+
+The existing three paths now also cover manual appearance and exact colors/Undo/reload, labeled AI artwork previews/locks/current context, QR links, separate mobile-context multitouch pickup/throw and movement, explicit version sending/restart, and revocation. Both WebGL and `PW_CANVAS=1` runs pass with retries disabled. Physical phones and live model availability are separate checks.

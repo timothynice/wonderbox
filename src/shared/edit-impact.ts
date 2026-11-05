@@ -44,7 +44,7 @@ function changedObjects<T extends { id: string }>(
               const av = a[key as keyof T],
                 bv = b[key as keyof T];
               if (equal(av, bv)) return [];
-              if (key === "behaviors")
+              if (key === "behaviors" || key === "appearance")
                 return Object.keys(av as object)
                   .filter(
                     (field) =>
@@ -53,7 +53,7 @@ function changedObjects<T extends { id: string }>(
                         (bv as Record<string, unknown>)[field],
                       ),
                   )
-                  .map((field) => `behaviors.${field}`);
+                  .map((field) => `${key}.${field}`);
               return [key];
             },
           )
@@ -92,7 +92,7 @@ export function deriveEditImpact(
       : null;
   if (!reason && before.id !== after.id)
     reason = "A different project starts a fresh simulation.";
-  if (!reason && worldChanges.some((c) => c.field !== "atmosphere"))
+  if (!reason && worldChanges.some((c) => ["width", "height", "gravity"].includes(c.field)))
     reason =
       "World size or gravity changed; restart at a valid checkpoint or spawn.";
   if (!reason && terrainChanges.length)

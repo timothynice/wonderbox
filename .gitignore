@@ -18,3 +18,5 @@ AGENTS.md
 .env*
 
 !.env.example
+
+.wonderbox-shares/

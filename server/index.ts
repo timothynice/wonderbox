@@ -9,6 +9,7 @@ import { proposeEdit, providerConfig, ProviderError } from "./agent.js";
 import inspectProject from '../actions/inspect-project.js';
 import previewTransaction from '../actions/preview-transaction.js';
 import checkReachability from '../actions/check-reachability.js';
+import { createShareRouter } from "./sharing.js";
 import planStaticStep from '../actions/plan-static-step.js';
 
 export const app = express();
@@ -40,6 +41,7 @@ app.use("/api", (req, res, next) => {
   }
   next();
 });
+app.use("/api/share", createShareRouter());
 app.get("/api/health", (_req, res) => {
   const config = providerConfig();
   res.json({

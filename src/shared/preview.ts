@@ -23,6 +23,16 @@ const labels: Record<string, string> = {
   moveSpeed: "Travel speed",
   requiredStars: "Stars to unlock",
   atmosphere: "Atmosphere",
+  theme: "World theme",
+  terrainStyle: "Terrain artwork",
+  foliageDensity: "Foliage density",
+  starDensity: "Sky sparkle density",
+  palette: "Art palette",
+  variant: "Silhouette",
+  pattern: "Surface pattern",
+  accessory: "Accessory",
+  primaryColor: "Primary color",
+  accentColor: "Accent color",
   gravity: "Gravity",
   width: "Width",
   height: "Height",
@@ -32,7 +42,7 @@ const labels: Record<string, string> = {
   locked: "AI lock",
 };
 const value = (v: unknown) =>
-  typeof v === "boolean" ? (v ? "on" : "off") : String(v);
+  v === null ? "automatic" : typeof v === "boolean" ? (v ? "on" : "off") : String(v);
 const at = (object: unknown, path: string): unknown =>
   path
     .split(".")
@@ -61,7 +71,7 @@ export function describeEditImpact(impact: EditImpact): string[] {
               );
           }
         } else {
-          const key = field.replace(/^behaviors\./, "");
+          const key = field.replace(/^(behaviors|appearance)\./, "");
           changes.push(
             `${e.after.name} · ${labels[key] ?? key}: ${value(at(e.before, field))} → ${value(at(e.after, field))}`,
           );

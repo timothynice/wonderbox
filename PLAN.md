@@ -118,3 +118,20 @@ User authorized repository setup and Vercel publication. Authenticated GitHub/Ve
 - Hosted keyboard/pause/runtime separation, manual float/reload, genuine Gemini float edit/Undo, terrain painting/Undo, placement/duplicate/delete/Undo, typing isolation, export/import/reload/invalid rollback all verified. Hosted desktop/narrow screenshots inspected; no horizontal overflow. Unauthorized AI401 and foreign-origin mutation403 verified.
 - Native Node ESM imports corrected after detecting the first deployment's function startup failure. Earlier failing/obsolete CI/deployments remain history, not passing evidence. Local CLI callback trailing semicolons adjusted for the current runner parser.
 - Known nested-Zod advisory remains:4high package findings, no new findings. Public Clips, owner testing and final competition submission/terms remain user steps. No competition entry submitted.
+
+## Artwork, phone play and demo expansion — release verification
+
+User authorized priorities1–3 and specialist agents. Build richer shared original artwork customization (theme, terrain, palette/exact colors, silhouette, patterns/accessories), compose through canonical validated actions and AI previews without changing collision geometry; add unlisted QR/link player with touch controls and explicitly sent revision snapshots; improve actual-app demo. No accounts/native app or arbitrary image/code generation in this slice.
+
+- [x] Shared appearance schema/default migration/patches/locks/preview plus genuine model grammar/context.
+- [x] Original procedural rendering, calm inspector/art-direction controls, safe resume.
+- [x] Durable phone snapshot sharing with separate owner token, expiry/revocation, update prompt, mobile player/touch.
+- [ ] Vertical-slice unit/browser/live-provider checks, demo documentation/capture, final CI/build/deployment.
+
+Private Vercel Blob store provisioned and linked to existing Hobby project for authored snapshots; no upgrade or public bucket. Existing content retained. Secrets remain server-only. New Blob SDK dependency exposed a patched same-line CLI-config update; verify audit returns only existing reviewed upstream advisory. Local share files will be ignored; private owner tokens never appear in the QR link or public project JSON.
+
+Implementation complete: shared original art with six palettes/exact independent colors, three silhouettes/patterns and four accessories; four world themes/three terrain finishes/density/light; preserved runtime/hitboxes; inspector and art-direction dialog. Phone links have7day expiry, independent owner capability, private durable storage, atomic CAS, revoke and explicit version/restart. Local filesystem alternative is durable on a single Node host. No accounts/native app/arbitrary generated imagery.
+
+Current checks:72 unit tests/15files, typecheck/build/dependency policy pass; expanded exactly3 browser paths passed WebGL and Canvas with retries disabled. Actual private Blob roundtrip/CAS/revoke passed after fixing compressed weakETags without weakening concurrency. Genuine new AI artwork remains blocked by providerHTTP402 depleted credits; pending owner credential/credit response. Manual demo capture and final deployment/hosted check in progress. Physical-device/Safari and group testing remain owner followups.
+
+Final frozen-source repeat: the same three browser tests passed9/9 across three runs (2.2min), retries disabled. Secret comparison across95 repository/source files and built assets found0 credential matches; `git diff --check` clean. Hosted expansion verification follows deployment.

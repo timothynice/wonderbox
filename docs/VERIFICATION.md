@@ -123,3 +123,15 @@ Current production returned health200/configuredGemini2.5Flash. Chromium actual-
 Local59unit tests/12files, typecheck, build and3critical browser paths pass after the native-ESM correction. GitHub CI run41551391561 passed all gates, including3/3 browser paths on the production Canvas fallback with retries disabled. The initial GPU-free Linux run exposed airborne checkpoint overshoot and exceeded the third flow's duration; it is retained as failing history. Corrected route waits for landing before crossing the checkpoint. Local Canvas fallback3/3 also passed.
 
 Additional hosted direct-editor checks passed terrain painting/Undo, object placement/duplicate/delete/Undo and typing isolation; hosted persistence checks passed export/download, validated import round trip, reload and invalid-import rollback. Callback parser compatibility was fixed by removing trailing function-expression semicolons; no application workaround was needed.
+
+## Artwork and phone expansion — November4,2026
+
+- Typecheck,72 unit tests/15 files and production build pass. Dependency gate retains only the4 previously reviewed high package findings; no new advisory introduced. Blob’s CLI-config dependency is overridden to compatible patched0.3.6.
+- Expanded exactly3 critical browser tests pass defaultWebGL3/3 (33.9s) and Canvas3/3 (47.5s), retries disabled. Coverage now includes appearance/exact-color editing, Undo/redo/reload/import; labeled AI-art fixtures with preview/locks/current context; QR and separate mobile browser context, actual multitouch movement/jump/pickup/throw, pause, explicit version sending/restart and revocation. Fixture results are not live AI evidence.
+- Actual private Vercel Blob probe passed create/read/update/stale-ETag conflict/revoke. Testing uncovered compressed GET weak ETags breaking conditional writes; identity-encoding reads now preserve the exact strong storage ETag atomically with the body. Weak markers fail closed. Unit regression protects this boundary.
+- Actual rendered desktop art-direction dialog and QR/player screens inspected. Touch-emulated Chromium tested portrait390×844 and landscape844×390, with no overflow/page exceptions or authored-state mutation. This is not physical-device/Safari or human play-study evidence.
+- Live Gemini artwork attempt is currently blocked by HTTP402 depleted credits. Nothing applied; schema/grammar/error handling and labeled fixtures pass. Direct art editing and phone sharing require no model account.
+
+Screenshots: `output/playwright/art-direction-polished.png`, `art-runtime-autumn.png`, `phone-share-dialog.png`, `phone-touch-portrait.png`, `phone-touch-landscape.png`. Group testing remains deferred. Clips publication and legal/submission steps remain with the user.
+
+Final frozen-source repeat: the same three browser tests passed9/9 across three runs (2.2min), retries disabled. Secret comparison across95 repository/source files and built assets found0 credential matches; `git diff --check` clean. Hosted expansion verification follows deployment.

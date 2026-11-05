@@ -8,3 +8,4 @@ playwright-report
 .git
 AGENTS.md
 .playwright-cli
+.wonderbox-shares

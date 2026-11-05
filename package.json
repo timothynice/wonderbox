@@ -15,10 +15,12 @@
   },
   "dependencies": {
     "@agent-native/core": "0.222.2",
+    "@vercel/blob": "^2.8.2",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "lucide-react": "^0.468.0",
     "phaser": "3.90.0",
+    "qrcode": "^1.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "zod": "^4.1.12"
@@ -27,6 +29,7 @@
     "@playwright/test": "^1.64.1",
     "@types/express": "^5.0.5",
     "@types/node": "^24.10.0",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.1.0",
@@ -44,7 +47,8 @@
       "@modelcontextprotocol/server": "2.4.0",
       "@anthropic-ai/sdk": "0.91.1",
       "minimatch": "11.0.3"
-    }
+    },
+    "@vercel/cli-config": "0.3.6"
   },
   "engines": {
     "node": "24.x"

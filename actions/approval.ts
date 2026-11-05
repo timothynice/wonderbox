@@ -4,6 +4,7 @@ import type { Action } from "../src/shared/actions.js";
 export function needsApproval(actions: Action[]) {
   return (
     actions.length > 3 ||
+    actions.filter(a => a.type === "updateEntity" && a.patch.appearance !== undefined).length > 1 ||
     actions.some(
       (a) =>
         a.type === "removeEntity" ||
@@ -12,7 +13,11 @@ export function needsApproval(actions: Action[]) {
         (a.type === "setWorldSettings" &&
           (a.settings.width !== undefined ||
             a.settings.height !== undefined ||
-            a.settings.gravity !== undefined)),
+            a.settings.gravity !== undefined ||
+            a.settings.theme !== undefined ||
+            a.settings.terrainStyle !== undefined ||
+            a.settings.foliageDensity !== undefined ||
+            a.settings.starDensity !== undefined)),
     )
   );
 }

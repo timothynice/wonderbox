@@ -1,6 +1,7 @@
 import { z } from "zod";
 import {
   behaviorPatchSchema,
+  appearancePatchSchema,
   entitySchema,
   projectSchema,
   terrainSchema,
@@ -16,11 +17,12 @@ export const actionSchema = z.discriminatedUnion("type", [
       type: z.literal("updateEntity"),
       id: z.string(),
       patch: entitySchema
-        .omit({ id: true, kind: true, locked: true, behaviors: true })
+        .omit({ id: true, kind: true, locked: true, behaviors: true, appearance: true })
         .partial()
         .extend({
           locked: z.boolean().optional(),
           behaviors: behaviorPatchSchema.optional(),
+          appearance: appearancePatchSchema.optional(),
         }),
     })
     .strict(),
@@ -88,9 +90,10 @@ export function applyTransaction(
       if (action.type === "updateEntity") {
         if (options.source === "ai" && action.patch.locked !== undefined)
           throw new Error("Only you can change object locks.");
-        const { behaviors, ...properties } = action.patch;
+        const { behaviors, appearance, ...properties } = action.patch;
         Object.assign(entity, properties);
         if (behaviors) Object.assign(entity.behaviors, behaviors);
+        if (appearance) Object.assign(entity.appearance, appearance);
       }
       if (action.type === "moveEntity") {
         entity.x = action.x;

@@ -13,7 +13,7 @@ export default defineConfig({
   ],
   outputDir: "output/playwright/regression",
   use: {
-    baseURL: "http://127.0.0.1:4317",
+    baseURL: "http://127.0.0.1:49117",
     viewport: { width: 1440, height: 900 },
     browserName: "chromium",
     channel: process.env.PW_CHANNEL || "chromium",
@@ -24,7 +24,7 @@ export default defineConfig({
   },
   webServer: {
     command: "npx tsx tests/e2e/server.ts",
-    url: "http://127.0.0.1:4317/api/health",
+    url: "http://127.0.0.1:49117/api/health",
     reuseExistingServer: false,
     timeout: 30_000,
   },
