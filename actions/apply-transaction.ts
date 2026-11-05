@@ -6,6 +6,7 @@ import { needsApproval } from "./approval.js";
 import { checkRequestSchema } from '../src/shared/reachability.js';
 import checkRoute from './check-reachability.js';
 import { assertCheckedTerrainIntent } from './checked-intent.js';
+import { intentPlanSchema,checkEditIntent } from '../src/shared/intent.js';
 
 /** The single authored mutation boundary for direct manipulation and the model. */
 export const applyTransactionInput = z
@@ -16,6 +17,7 @@ export const applyTransactionInput = z
     source: z.enum(["manual", "ai"]),
     approved: z.boolean().default(false),
     checkRequest: checkRequestSchema.optional(),
+    intent: intentPlanSchema.optional(),
   })
   .strict();
 
@@ -23,12 +25,16 @@ export default defineAction({
   description:
     "Apply an atomic Wonderbox level edit. Validates components, world bounds, revisions and AI locks. Both the editor and creative partner use this capability.",
   schema: applyTransactionInput,
-  run: async ({ project, actions, expectedRevision, source, approved, checkRequest }) => {
+  run: async ({ project, actions, expectedRevision, source, approved, checkRequest, intent }) => {
     if (source === "ai" && (needsApproval(actions) || checkRequest) && !approved)
       throw new Error(
         "This broad or destructive edit needs the Apply preview confirmation.",
       );
     const next = applyTransaction(project, actions, { expectedRevision, source });
+    if (intent) {
+      const checked=checkEditIntent(project,next,intent);
+      if(!checked.passed)throw new Error(`The edit no longer satisfies its requested checks. ${checked.missing.slice(0,4).join('; ')}`);
+    }
     // Recompute against these exact current-revision actions. Client/model-supplied
     // evidence is never trusted, and a failed check discards the derived clone.
     if (checkRequest) {

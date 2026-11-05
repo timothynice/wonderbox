@@ -7,6 +7,7 @@ import { buildTransactionPreview } from '../src/shared/preview.js';
 import inspectProject from '../actions/inspect-project.js';
 import applyEdit from '../actions/apply-transaction.js';
 import { needsApproval, proposeEdit } from '../server/agent.js';
+import { fixtureIntent, fixtureContext, geminiFixture } from './intent-fixture';
 
 const art: Action[] = [
   { type: 'updateEntity', id: 'pip', patch: { appearance: { palette: 'lavender', variant: 'round', pattern: 'spots', accessory: 'scarf', primaryColor: '#b49ae8', accentColor: '#FBE7A1' } } },
@@ -76,11 +77,13 @@ describe('shared original artwork customization', () => {
     let body: any;
     const fetcher: typeof fetch = async (_url, options) => {
       body = JSON.parse(String(options?.body));
-      return new Response(JSON.stringify({candidates:[{content:{parts:[{text:JSON.stringify({summary:'Restyled original artwork, preserving physics.',actions:art})}]}}]}),{status:200});
+      return geminiFixture(fixtureContext(options).workflow?.phase==='understand-request' ? fixtureIntent(art) : {summary:'EVERYTHING SUCCEEDED including imaginary unrelated changes.',actions:art});
     };
     const proposal = await proposeEdit({project,prompt:'Make Pip lavender and the garden autumn. Preserve rules and platforms.',selectedId:'pip'},fetcher);
     expect(proposal.actions).toEqual(art);expect(proposal.requiresApproval).toBe(true);
     expect(proposal.preview?.impact.mode).toBe('preserve');
+    expect(proposal.summary).toContain('Art palette: original → lavender');
+    expect(proposal.summary).not.toContain('EVERYTHING SUCCEEDED');
     expect(body.generationConfig.responseJsonSchema.properties.actions.items.properties.patch.properties.appearance.properties.pattern.enum).toEqual(['plain','spots','stripes']);
     expect(body.generationConfig.responseJsonSchema.properties.actions.items.properties.entity.properties.appearance.properties.pattern).toBeDefined();
     expect(body.systemInstruction.parts[0].text).toContain('appearance');

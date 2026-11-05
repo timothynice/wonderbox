@@ -413,11 +413,22 @@ test("3. AI shared actions: focused edit, locks, preview, undo, current context,
   await expect(button(page,'Apply changes')).toBeVisible();
   await expect(page.locator('.preview')).toContainText('Art palette: original → lavender');
   await expect(page.locator('.preview')).toContainText('World theme: garden → autumn');
+  // Independent intent fixture includes moonlight; first proposal omits it.
+  // Only the genuinely re-requested, complete second proposal may be previewed.
+  await expect(page.locator('.preview')).toContainText('Atmosphere: day → moonlight');
+  await expect(page.getByLabel('Completed agent steps')).toContainText('Incomplete candidate: World · atmosphere: moonlight');
+  await expect(page.getByLabel('Completed agent steps')).toContainText('3 of at most 3 real model requests used');
+  await expect(page.locator('.intent-checks summary')).toContainText('Request checks · 9');
+  await page.locator('.intent-checks summary').click();
+  await expect(page.locator('.intent-checks')).toContainText('World · atmosphere: moonlight');
+  await expect(page.locator('.chat.agent').last()).not.toContainText('EVERYTHING SUCCEEDED');
   expect(await project(page)).toEqual(artBase);
+  const artApply = page.waitForRequest(request => request.url().endsWith('/api/action'));
   await button(page,'Apply changes').click();
+  expect((await artApply).postDataJSON().intent.fields).toHaveLength(9);
   await expect.poll(async () => (await player(page)).appearance.palette).toBe('lavender');
   expect((await player(page)).appearance).toMatchObject({variant:'round',pattern:'spots',accessory:'scarf'});
-  expect((await project(page)).world).toMatchObject({theme:'autumn',terrainStyle:'crystal'});
+  expect((await project(page)).world).toMatchObject({theme:'autumn',terrainStyle:'crystal',atmosphere:'moonlight'});
   expect((await state(page)).player).toEqual(artRuntime.player);
   expect((await project(page)).terrain).toEqual(artBase.terrain);
   expect((await player(page)).behaviors).toEqual(artBase.entities.find(e=>e.id==='pip')!.behaviors);
@@ -428,7 +439,9 @@ test("3. AI shared actions: focused edit, locks, preview, undo, current context,
   await button(page,'Appearance palette coral').click();
   await expect.poll(async () => (await player(page)).appearance.palette).toBe('coral');
   await ask(page,'TEST: read current artwork');
-  await expect(page.locator('.chat.agent').last()).toContainText('TEST FIXTURE: current palette coral; theme garden; selection pip; recent edits');
+  // Read-only answers are grounded in the latest canonical fields, not fixture prose.
+  await expect(page.locator('.chat.agent').last()).toContainText('coral');
+  await expect(page.locator('.chat.agent').last()).toContainText('garden');
   await button(page,'Undo (⌘Z)').click();
   await ask(page, "TEST: float");
   expect((await player(page)).behaviors.floatSeconds).toBe(0.8);
@@ -436,11 +449,7 @@ test("3. AI shared actions: focused edit, locks, preview, undo, current context,
   expect((await player(page)).behaviors.floatSeconds).toBe(0);
   await number(page, "Float duration (s)", "0.4");
   await ask(page, "TEST: read current value");
-  await expect(
-    page.locator('.chat.agent').getByText(
-      /TEST FIXTURE: current float is 0.4; selection pip; recent edits/,
-    ),
-  ).toBeVisible();
+  await expect(page.locator('.chat.agent').last()).toContainText('0.4');
   let revision = (await project(page)).revision;
   await page.getByRole("checkbox", { name: "Lock against AI edits" }).click();
   await revisionAfter(page, revision);

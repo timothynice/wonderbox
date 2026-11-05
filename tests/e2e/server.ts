@@ -11,6 +11,7 @@ for (const name of ["BLOB_READ_WRITE_TOKEN", "BLOB_STORE_ID", "VERCEL", "AI_ACCE
 process.once("exit", () => rmSync(shareDirectory, {recursive:true,force:true}));
 import type { Action } from "../../src/shared/actions";
 import type { Project } from "../../src/shared/model";
+import { emptyFixtureIntent, fixtureIntent } from "../intent-fixture";
 
 const failuresSeen = new Map<string, number>();
 const provider = express();
@@ -21,10 +22,11 @@ provider.post("/v1/chat/completions", async (req, res) => {
     project: Project;
     selectedId: string | null;
     recentEdits: string[];
+    workflow: {phase?:string;previousAttempts?:unknown[]};
   };
   const { request, project } = context;
   const failureKey = JSON.stringify([project.id, project.revision, request]);
-  if (request === "TEST: provider failure") {
+  if (request === "TEST: provider failure" && context.workflow.phase === "understand-request") {
     const count = failuresSeen.get(failureKey) ?? 0;
     failuresSeen.set(failureKey, count + 1);
     if (count % 2 === 0) {
@@ -32,7 +34,7 @@ provider.post("/v1/chat/completions", async (req, res) => {
       return;
     }
   }
-  if (request === "TEST: stale float")
+  if (request === "TEST: stale float" && context.workflow.phase === "understand-request")
     await new Promise((r) => setTimeout(r, 1500));
   if (request === "TEST: exhaust ledge search") {
     const count = failuresSeen.get(failureKey) ?? 0;
@@ -75,14 +77,39 @@ provider.post("/v1/chat/completions", async (req, res) => {
               behaviors: { floatSeconds: 0.8 },
             },
           ];
-  const summary =
-    request === "TEST: read current artwork"
-      ? `TEST FIXTURE: current palette ${project.entities.find(e=>e.id==='pip')!.appearance.palette}; theme ${project.world.theme}; selection ${context.selectedId}; recent edits ${context.recentEdits.length}.`
-      : request === "TEST: read current value"
-      ? `TEST FIXTURE: current float is ${project.entities.find((e) => e.id === "pip")!.behaviors.floatSeconds}; selection ${context.selectedId}; recent edits ${context.recentEdits.length}.`
-      : "TEST FIXTURE: validated gameplay proposal.";
+  if (context.workflow.phase === "understand-request") {
+    // TEST ONLY: independent expected contracts; these never run in the real provider.
+    // The art omission case deliberately declares moonlight before any proposal exists.
+    const intent = request === "TEST: art direction" ? {
+      ...emptyFixtureIntent(), fields: [
+        {target:"entity",id:"pip",kind:null,field:"appearance.palette",value:"lavender"},
+        {target:"entity",id:"pip",kind:null,field:"appearance.variant",value:"round"},
+        {target:"entity",id:"pip",kind:null,field:"appearance.pattern",value:"spots"},
+        {target:"entity",id:"pip",kind:null,field:"appearance.accessory",value:"scarf"},
+        {target:"entity",id:"pip",kind:null,field:"appearance.primaryColor",value:null},
+        {target:"entity",id:"pip",kind:null,field:"appearance.accentColor",value:null},
+        {target:"world",id:null,kind:null,field:"theme",value:"autumn"},
+        {target:"world",id:null,kind:null,field:"terrainStyle",value:"crystal"},
+        {target:"world",id:null,kind:null,field:"atmosphere",value:"moonlight"},
+      ],
+    } : request === "TEST: read current artwork" || request === "TEST: read current value" ? {
+      ...emptyFixtureIntent(), mode:"inspect", readFields: request === "TEST: read current artwork"
+        ? [{target:"entity",id:"pip",kind:null,field:"appearance.palette"},{target:"world",id:null,kind:null,field:"theme"}]
+        : [{target:"entity",id:"pip",kind:null,field:"behaviors.floatSeconds"}],
+    } : fixtureIntent(actions);
+    res.json({choices:[{message:{content:JSON.stringify(intent)}}]});
+    return;
+  }
+  let proposedActions=actions;
+  if (request === "TEST: art direction") {
+    const key=`art-proposal:${failureKey}`;
+    const count=failuresSeen.get(key)??0;
+    failuresSeen.set(key,count+1);
+    if(count===0)proposedActions=actions.map(action=>action.type==='setWorldSettings'
+      ? {type:'setWorldSettings',settings:{theme:'autumn',terrainStyle:'crystal'}} : action);
+  }
   res.json({
-    choices: [{ message: { content: JSON.stringify({ summary, actions }) } }],
+    choices: [{ message: { content: JSON.stringify({ summary: "TEST FIXTURE: EVERYTHING SUCCEEDED, including omitted atmosphere and imaginary changes.", actions:proposedActions }) } }],
   });
 });
 const listener = provider.listen(49118, "127.0.0.1");

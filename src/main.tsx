@@ -47,6 +47,7 @@ import { mountGame } from "./game";
 import { deriveEditImpact } from "./shared/edit-impact";
 import { describeEditImpact, type TransactionPreview } from "./shared/preview";
 import type { ReachabilityEvidence } from "./shared/reachability";
+import type { EditIntent } from "./shared/intent";
 
 type RouteRequest = { targetTerrainId: string; sourceTerrainId?: string };
 type RetryRequest = {
@@ -228,6 +229,7 @@ function App() {
     expectedRevision = current.current.revision,
     approved = false,
     checkRequest?: RouteRequest,
+    intent?: EditIntent,
   ) {
     if (mutationBusy.current) {
       setMessage("An edit is saving. Try again in a moment.");
@@ -247,6 +249,7 @@ function App() {
           source,
           approved,
           checkRequest,
+          intent,
         }),
       });
       const data = await response.json();
@@ -584,6 +587,9 @@ function App() {
           result.summary,
           "ai",
           result.baseRevision,
+          false,
+          undefined,
+          result.intent,
         );
         if (!ok)
           throw Error(
@@ -1379,7 +1385,7 @@ function App() {
                     {activity.map((step, index) => (
                       <li key={index}>
                         <span aria-hidden="true">
-                          {step.status === "failed" ? "○" : "✓"}
+                          {["failed","rejected","invalid-output"].includes(step.status) ? "○" : "✓"}
                         </span>
                         {step.summary}
                       </li>
@@ -1414,6 +1420,7 @@ function App() {
                   <div className="preview">
                     <strong>{preview.source === "manual" ? "Mechanical tool preview" : "AI preview"} · {preview.actions.length} {preview.actions.length === 1 ? "change" : "changes"}</strong>
                     <p>{preview.summary}</p>
+                    {preview.intentEvidence?.passed && <details className="intent-checks"><summary>✓ Request checks · {preview.intentEvidence.requested}</summary><ul>{preview.intentEvidence.matched.map((match:string,index:number)=><li key={index}>{match}</li>)}</ul><small>Checked against authored state. Apply rechecks the same contract.</small></details>}
                     <ul className="change-list">
                       {preview.preview?.changes?.map(
                         (change: string, index: number) => (
@@ -1444,6 +1451,7 @@ function App() {
                             pending.baseRevision,
                             true,
                             pending.checkRequest,
+                            pending.intent,
                           );
                           if (ok) setPreview(null);
                         }}

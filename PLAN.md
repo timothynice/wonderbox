@@ -161,3 +161,16 @@ Owner requested code protection returnNovember28. Production `AI_PUBLIC_UNTIL` e
 Highest remaining competition priorities: improve compound-request correctness and summary fidelity (two genuine combined restyles omitted requested lighting); rehearse/record a new concise real-AI artwork+behavior+manual context+Undo+phone handoff demo; owner physical-iPhone/Safari playthrough and full starter victory; publish required public Clips and verify signed out; finalize description/attribution/creator details, submit beforeNovember9 11:59p.m.Pacific and confirm receipt. Group studies remain deferred per owner; no App Store/accounts/new engine scope. Existing tests/CI/public deployment and shared Agent-Native actions provide the foundation, but no winning score is guaranteed.
 
 Extension verified: production deployment43f3b97 Ready; health200 with accessCodeRequired:false. Production environment override saved as2026-11-28T08:00:00Z; fixed-time check confirms public immediately before the boundary and protected exactly at it. Typecheck,72 unit tests and production build pass. Only environment/docs changed; application access logic and the previously verified anonymous live request remain unchanged. Competition submission deadline remainsNovember9,2026 at11:59p.m.Pacific per current official rules.
+
+
+## AI completeness and final narrated demo — in progress
+
+- [x] Independently extract typed request requirements before proposing normal AI edits; validate requested values/counts/preservation through shared read-only Agent-Native capability. One bounded repair, no partial apply.
+- [x] Derive mutation summaries and read-only property answers from canonical authored data, not model claims. Recheck intent on Apply; preserve locks, atomicity and revisions.
+- [x] Eight new unit regressions and updated three browser critical paths pass, including omitted moonlight repair and fabricated summary rejection.
+- [ ] Genuine model verification, final all-gates run, deployment and anonymous hosted check.
+- [ ] Actual-app narrated Heart walkthrough with raw provenance, readable Agent-Native checks/manual context/Undo, and Clips upload instructions. No public upload/submission/terms acceptance.
+
+Intent interpretation remains a genuine probabilistic model step; typed checks prove the extracted bounded contract rather than arbitrary natural-language understanding. Checked terrain requests retain their separate deterministic goal and bounded physics evidence. Owner physical-phone/Safari and deferred usability studies remain separate.
+
+Live verification update: Gemini2.5Flash independently extracted all three world settings and completed autumn+moonlight+crystal in2.99s; two further repeats passed. Pip lavender/scarf/spots+float0.8 passed4.81s. Canonical read-only query returned manually authored #456abc and0.65 exactly. Sanitized evidence saved. Initial live attempts exposed optional-property decoder drift and an endless numeric tail; both applied nothing, and the decoder now requires all extracted world settings while excluding unrelated world keys. Nine new unit regressions bring suite to81. Actual-app recording independently passed the broader eight-check compound request, real keyboardledge landing, Undo and manual0.65read; checkedroute capture continues.

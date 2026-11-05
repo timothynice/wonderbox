@@ -11,6 +11,7 @@ import previewTransaction from '../actions/preview-transaction.js';
 import checkReachability from '../actions/check-reachability.js';
 import { createShareRouter } from "./sharing.js";
 import { publicAiEnabled } from "./access.js";
+import checkEditIntent from '../actions/check-edit-intent.js';
 import planStaticStep from '../actions/plan-static-step.js';
 
 export const app = express();
@@ -70,7 +71,7 @@ app.post("/api/action", async (req, res) => {
   }
 });
 for (const [endpoint, capability] of [
-  ['/api/inspect', inspectProject], ['/api/preview', previewTransaction], ['/api/check', checkReachability], ['/api/step-options', planStaticStep],
+  ['/api/check-intent',checkEditIntent], ['/api/inspect', inspectProject], ['/api/preview', previewTransaction], ['/api/check', checkReachability], ['/api/step-options', planStaticStep],
 ] as const) {
   app.post(endpoint, async (req, res) => {
     try { res.json(await capability.run(req.body)); }

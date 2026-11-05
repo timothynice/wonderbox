@@ -15,6 +15,7 @@ import { createStarterProject } from "../src/shared/starter";
 import { proposeEdit, needsApproval, affectedObjects } from "../server/agent";
 import type { Action } from "../src/shared/actions";
 import { app } from "../server/index";
+import { fixtureIntent, fixtureContext, geminiFixture, openaiFixture } from "./intent-fixture";
 
 describe("Agent-Native shared mutation and creative partner boundary", () => {
   beforeEach(() => {
@@ -25,17 +26,10 @@ describe("Agent-Native shared mutation and creative partner boundary", () => {
     vi.unstubAllEnvs();
     vi.restoreAllMocks();
   });
-  const response = (value: unknown) =>
-    vi.fn<typeof fetch>().mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          candidates: [
-            { content: { parts: [{ text: JSON.stringify(value) }] } },
-          ],
-        }),
-        { status: 200 },
-      ),
-    );
+  const response = (value: {actions:any[];summary:string}) =>
+    vi.fn<typeof fetch>().mockImplementation(async (_url, options) =>
+      geminiFixture(fixtureContext(options).workflow?.phase==='understand-request'
+        ? fixtureIntent(value.actions,value.summary) : value));
   it("uses the real defineAction for the same manual and AI transaction", async () => {
     const project = createStarterProject();
     const player = project.entities.find((e) => e.kind === "player")!;
@@ -89,7 +83,9 @@ describe("Agent-Native shared mutation and creative partner boundary", () => {
     expect(
       project.entities.find((e) => e.id === player.id)?.behaviors.floatSeconds,
     ).toBe(0);
-    const requestBody = JSON.parse(fetcher.mock.calls[0][1]?.body as string);
+    const proposalCall=fetcher.mock.calls.find(call=>fixtureContext(call[1]).workflow?.phase==='propose-edit')!;
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    const requestBody = JSON.parse(proposalCall[1]?.body as string);
     expect(requestBody.contents[0].parts[0].text).toContain("Moved the plant.");
     expect(requestBody.contents[0].parts[0].text).toContain(player.id);
     const grammar = requestBody.generationConfig.responseJsonSchema;
@@ -131,13 +127,14 @@ describe("Agent-Native shared mutation and creative partner boundary", () => {
         response({
           summary: "A change",
           actions: [
-            { type: "setWorldSettings", settings: { atmosphere: "day" } },
+            { type: "setWorldSettings", settings: { atmosphere: "moonlight" } },
             { type: "executeCode", code: "evil" },
           ],
         }),
       ),
-    ).rejects.toThrow(/invalid/);
+    ).rejects.toMatchObject({status:422,message:expect.stringContaining("Nothing changed")});
     expect(project.revision).toBe(0);
+    expect(project.world.atmosphere).toBe("day");
   });
   it("handles unsupported requests, quotas and missing credentials truthfully", async () => {
     const project = createStarterProject();
@@ -215,23 +212,11 @@ describe("Agent-Native shared mutation and creative partner boundary", () => {
     vi.stubEnv("OPENAI_API_KEY", "test-openai-key");
     vi.stubEnv("AI_BASE_URL", "https://example.invalid/v1");
     vi.stubEnv("AI_MODEL", "example-model");
-    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          choices: [
-            {
-              message: {
-                content: JSON.stringify({
-                  summary: "Unsupported; I can move terrain instead.",
-                  actions: [],
-                }),
-              },
-            },
-          ],
-        }),
-        { status: 200 },
-      ),
-    );
+    const fetcher = vi.fn<typeof fetch>().mockImplementation(async (_url, options) => openaiFixture(
+      fixtureContext(options).workflow?.phase==='understand-request'
+        ? fixtureIntent([], 'Multiplayer is unsupported; I can move terrain instead.')
+        : {summary:'Unsupported; I can move terrain instead.',actions:[]}
+    ));
     const result = await proposeEdit(
       { project, prompt: "Add multiplayer" },
       fetcher,
@@ -252,29 +237,9 @@ describe("Agent-Native shared mutation and creative partner boundary", () => {
     const fetcher = vi
       .fn<typeof fetch>()
       .mockResolvedValueOnce(new Response("{}", { status: 503 }))
-      .mockResolvedValueOnce(
-        new Response(
-          JSON.stringify({
-            candidates: [
-              {
-                content: {
-                  parts: [
-                    {
-                      text: JSON.stringify({
-                        summary: "The fallback supports this edit.",
-                        actions: [],
-                      }),
-                    },
-                  ],
-                },
-              },
-            ],
-          }),
-          { status: 200 },
-        ),
-      );
+      .mockImplementation(async () => geminiFixture(fixtureIntent([], 'Multiplayer is unsupported; the fallback is available.')));
     const result = await proposeEdit(
-      { project: createStarterProject(), prompt: "Float" },
+      { project: createStarterProject(), prompt: "Add multiplayer" },
       fetcher,
     );
     expect(fetcher).toHaveBeenCalledTimes(2);
@@ -385,7 +350,7 @@ describe("HTTP API release boundary", () => {
       prompt: "Float",
     });
     expect(invalid.status).toBe(502);
-    expect((await invalid.json()).error).toContain("invalid edit");
+    expect((await invalid.json()).error).toMatch(/invalid/i);
     vi.spyOn(AbortSignal, "timeout").mockReturnValue(AbortSignal.abort());
     stub.mockRejectedValue(new Error("aborted"));
     const timeout = await post("/api/agent", {

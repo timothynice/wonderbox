@@ -41,7 +41,7 @@ This builds production and runs **three browser tests**: play/interact/win; dire
 
 `npm run check:dependencies` audits production dependencies and rejects findings outside the precisely reviewed nested Zod exception. A passing gate with that exception is **not** a clean audit; see the dependency review.
 
-Failures retain screenshots/traces and an HTML report in `output/playwright/`. Use `npm run test:critical:headed` to watch, or `npx playwright test --repeat-each=3` to check repeatability after a build. Run `npm test` for the 72 unit tests. See [feature audit and coverage](docs/FEATURE-AUDIT.md).
+Failures retain screenshots/traces and an HTML report in `output/playwright/`. Use `npm run test:critical:headed` to watch, or `npx playwright test --repeat-each=3` to check repeatability after a build. Run `npm test` for the 81 unit tests. See [feature audit and coverage](docs/FEATURE-AUDIT.md).
 
 ## Play and create
 

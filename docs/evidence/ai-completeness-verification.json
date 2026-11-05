@@ -1,0 +1,309 @@
+{
+  "date": "2026-11-05T05:46:40.393Z",
+  "provenance": "Genuine configured Gemini model through proposeEdit; original starter, no fixture. Two world repeats plus manually authored shared-action values read by model-selected fields. Separate UI demo follows.",
+  "evidence": [
+    {
+      "test": "compound world repeat",
+      "result": {
+        "summary": "Atmosphere: day → moonlight; World theme: garden → autumn; Terrain artwork: moss → crystal.",
+        "actions": [
+          {
+            "type": "setWorldSettings",
+            "settings": {
+              "atmosphere": "moonlight",
+              "theme": "autumn",
+              "terrainStyle": "crystal"
+            }
+          }
+        ],
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "usedFallback": false,
+        "baseRevision": 0,
+        "requiresApproval": true,
+        "affectedIds": [],
+        "preview": {
+          "baseRevision": 0,
+          "impact": {
+            "baseRevision": 0,
+            "nextRevision": 1,
+            "mode": "preserve",
+            "reason": "Resume here. Position, progress, health, and moving-platform phase are preserved.",
+            "affectedIds": [],
+            "entityChanges": [],
+            "terrainChanges": [],
+            "worldChanges": [
+              {
+                "field": "atmosphere",
+                "before": "day",
+                "after": "moonlight"
+              },
+              {
+                "field": "theme",
+                "before": "garden",
+                "after": "autumn"
+              },
+              {
+                "field": "terrainStyle",
+                "before": "moss",
+                "after": "crystal"
+              }
+            ]
+          },
+          "affectedIds": [],
+          "changes": [
+            "Atmosphere: day → moonlight",
+            "World theme: garden → autumn",
+            "Terrain artwork: moss → crystal"
+          ]
+        },
+        "activity": [
+          {
+            "capability": "inspect",
+            "status": "completed",
+            "summary": "Inspected authored revision 0: 16 entities, 9 terrain surfaces, 0 AI locks."
+          },
+          {
+            "capability": "intent",
+            "status": "completed",
+            "summary": "gemini-2.5-flash identified 3 requested checks independently of candidate actions."
+          },
+          {
+            "capability": "propose",
+            "status": "completed",
+            "attempt": 1,
+            "summary": "gemini-2.5-flash returned 1 candidate actions; 2 of at most 3 real model requests used."
+          },
+          {
+            "capability": "preview",
+            "status": "validated",
+            "attempt": 1,
+            "summary": "Validated 1 actions as one atomic preview affecting 0 authored objects or regions."
+          },
+          {
+            "capability": "verify",
+            "status": "validated",
+            "attempt": 1,
+            "summary": "Checked 3 requested properties/counts and preserved unrequested fields. Summary comes from validated differences."
+          }
+        ],
+        "intent": {
+          "mode": "edit",
+          "fields": [
+            {
+              "target": "world",
+              "id": null,
+              "kind": null,
+              "field": "theme",
+              "value": "autumn"
+            },
+            {
+              "target": "world",
+              "id": null,
+              "kind": null,
+              "field": "atmosphere",
+              "value": "moonlight"
+            },
+            {
+              "target": "world",
+              "id": null,
+              "kind": null,
+              "field": "terrainStyle",
+              "value": "crystal"
+            }
+          ],
+          "counts": [],
+          "existence": [],
+          "readFields": [],
+          "allowTerrainChanges": false,
+          "explanation": ""
+        },
+        "intentEvidence": {
+          "passed": true,
+          "requested": 3,
+          "matched": [
+            "World · theme: autumn",
+            "World · atmosphere: moonlight",
+            "World · terrainStyle: crystal"
+          ],
+          "missing": []
+        }
+      }
+    },
+    {
+      "test": "compound world repeat",
+      "result": {
+        "summary": "Atmosphere: day → moonlight; World theme: garden → autumn; Terrain artwork: moss → crystal.",
+        "actions": [
+          {
+            "type": "setWorldSettings",
+            "settings": {
+              "atmosphere": "moonlight",
+              "theme": "autumn",
+              "terrainStyle": "crystal"
+            }
+          }
+        ],
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "usedFallback": false,
+        "baseRevision": 0,
+        "requiresApproval": true,
+        "affectedIds": [],
+        "preview": {
+          "baseRevision": 0,
+          "impact": {
+            "baseRevision": 0,
+            "nextRevision": 1,
+            "mode": "preserve",
+            "reason": "Resume here. Position, progress, health, and moving-platform phase are preserved.",
+            "affectedIds": [],
+            "entityChanges": [],
+            "terrainChanges": [],
+            "worldChanges": [
+              {
+                "field": "atmosphere",
+                "before": "day",
+                "after": "moonlight"
+              },
+              {
+                "field": "theme",
+                "before": "garden",
+                "after": "autumn"
+              },
+              {
+                "field": "terrainStyle",
+                "before": "moss",
+                "after": "crystal"
+              }
+            ]
+          },
+          "affectedIds": [],
+          "changes": [
+            "Atmosphere: day → moonlight",
+            "World theme: garden → autumn",
+            "Terrain artwork: moss → crystal"
+          ]
+        },
+        "activity": [
+          {
+            "capability": "inspect",
+            "status": "completed",
+            "summary": "Inspected authored revision 0: 16 entities, 9 terrain surfaces, 0 AI locks."
+          },
+          {
+            "capability": "intent",
+            "status": "completed",
+            "summary": "gemini-2.5-flash identified 3 requested checks independently of candidate actions."
+          },
+          {
+            "capability": "propose",
+            "status": "completed",
+            "attempt": 1,
+            "summary": "gemini-2.5-flash returned 1 candidate actions; 2 of at most 3 real model requests used."
+          },
+          {
+            "capability": "preview",
+            "status": "validated",
+            "attempt": 1,
+            "summary": "Validated 1 actions as one atomic preview affecting 0 authored objects or regions."
+          },
+          {
+            "capability": "verify",
+            "status": "validated",
+            "attempt": 1,
+            "summary": "Checked 3 requested properties/counts and preserved unrequested fields. Summary comes from validated differences."
+          }
+        ],
+        "intent": {
+          "mode": "edit",
+          "fields": [
+            {
+              "target": "world",
+              "id": null,
+              "kind": null,
+              "field": "theme",
+              "value": "autumn"
+            },
+            {
+              "target": "world",
+              "id": null,
+              "kind": null,
+              "field": "atmosphere",
+              "value": "moonlight"
+            },
+            {
+              "target": "world",
+              "id": null,
+              "kind": null,
+              "field": "terrainStyle",
+              "value": "crystal"
+            }
+          ],
+          "counts": [],
+          "existence": [],
+          "readFields": [],
+          "allowTerrainChanges": false,
+          "explanation": ""
+        },
+        "intentEvidence": {
+          "passed": true,
+          "requested": 3,
+          "matched": [
+            "World · theme: autumn",
+            "World · atmosphere: moonlight",
+            "World · terrainStyle: crystal"
+          ],
+          "missing": []
+        }
+      }
+    },
+    {
+      "test": "live canonical manual read",
+      "result": {
+        "baseRevision": 1,
+        "provider": "gemini",
+        "model": "gemini-2.5-flash",
+        "usedFallback": false,
+        "actions": [],
+        "summary": "Pip · garden dreamer · appearance.primaryColor: #456abc; Pip · garden dreamer · behaviors.floatSeconds: 0.65. No changes made.",
+        "requiresApproval": false,
+        "affectedIds": [],
+        "activity": [
+          {
+            "capability": "inspect",
+            "status": "completed",
+            "summary": "Inspected authored revision 1: 16 entities, 9 terrain surfaces, 0 AI locks."
+          },
+          {
+            "capability": "intent",
+            "status": "completed",
+            "summary": "gemini-2.5-flash identified 0 requested checks independently of candidate actions."
+          }
+        ],
+        "intent": {
+          "mode": "inspect",
+          "fields": [],
+          "counts": [],
+          "existence": [],
+          "readFields": [
+            {
+              "target": "entity",
+              "id": "pip",
+              "kind": "player",
+              "field": "appearance.primaryColor"
+            },
+            {
+              "target": "entity",
+              "id": "pip",
+              "kind": "player",
+              "field": "behaviors.floatSeconds"
+            }
+          ],
+          "allowTerrainChanges": false,
+          "explanation": ""
+        }
+      }
+    }
+  ]
+}
