@@ -1,0 +1,35 @@
+{
+  "passed": true,
+  "fixture": false,
+  "accessCodeRequired": false,
+  "accessCodeInputVisible": false,
+  "accessCodeHeaderSent": false,
+  "provider": "gemini",
+  "model": "gemini-2.5-flash",
+  "actions": [
+    {
+      "type": "updateEntity",
+      "id": "pip",
+      "patch": {
+        "appearance": {
+          "palette": "mint",
+          "primaryColor": null,
+          "accentColor": null
+        }
+      }
+    }
+  ],
+  "checks": [
+    "fresh public page with no code input",
+    "genuine anonymous AI artwork edit",
+    "terrain preserved",
+    "Undo"
+  ],
+  "pageErrors": [],
+  "date": "2026-11-04",
+  "origin": "https://wonderbox-three.vercel.app",
+  "publicUntil": "2026-11-15T08:00:00Z",
+  "featureCommit": "fe034f6",
+  "screenshot": "output/playwright/public-judging-live-ai.png",
+  "providerUsageCap": "Existing owner-configured provider cap, unchanged; no new application spending limiter."
+}
