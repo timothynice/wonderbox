@@ -21,7 +21,7 @@ Earlier failed raw takes are retained. One attempt encountered an HTTP 500 durin
 
 ## Reproduce locally
 
-Start a production server using the README instructions and verify a real provider first. Recording creates a fresh browser project; it does not reset your personal saved project. Model calls use the configured provider's quota. Install Chromium with `npx playwright install chromium --no-shell`, then:
+Build and start a frozen production server in one terminal with `npm run build` followed by `PORT=3003 npm start`, then leave it running. Verify a real provider first. Recording creates a fresh browser project; it does not reset your personal saved project. Model calls use the configured provider's quota. Install Chromium with `npx playwright install chromium --no-shell`, then:
 
 ```sh
 DEMO_URL=http://127.0.0.1:3003 node scripts/record-final-demo.mjs
