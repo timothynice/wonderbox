@@ -38,3 +38,7 @@ No entry has been submitted, public recording published, or terms accepted by th
 ## Artwork and phone release evidence boundary
 
 The new shared appearance boundary, procedural rendering and phone player are implemented and subject to the release verification summary. During implementation, a new genuine artwork-agent request received an HTTP402 credit/billing response; no live artwork success is claimed from that attempt. Earlier real-model gameplay and checked-terrain evidence remains historical evidence of those capabilities. The final showcase script in DEMO.md explicitly separates a future live take from a manual-controls take. Touch browser automation is not a physical-device usability study. Public Clips publication and submission are still outstanding human actions.
+
+### Manual artwork and phone showcase
+
+A new local actual-app highlight is available at `output/playwright/art-phone-manual-demo.webm` (2:07, silent captions), with evidence in `output/playwright/art-phone-manual-evidence.json`. It shows direct artwork/behavior controls, a keyboard float landing, QR sharing, responsive touch play and explicit version delivery. It makes no model calls and does not establish live AI artwork or physical-phone testing; Undo is omitted and the final frame is explicitly held. It is not a public Clips upload. See `docs/DEMO.md` for capture provenance and the full planned showcase.

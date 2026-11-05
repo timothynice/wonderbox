@@ -104,3 +104,11 @@ Do not put provider keys in Vite variables, client bundles, JSON exports, or git
 - [Verification and limitations](docs/VERIFICATION.md)
 - [Browser check reproduction](scripts/README.md)
 - [Implementation status](PLAN.md)
+
+## Current limits
+
+- New live AI artwork verification is blocked by provider HTTP402 (depleted credits). Restore credits before rehearsing the live artwork demo. Direct artwork editing and phone sharing work without model credits; fixture tests do not establish live model availability.
+- QR play is browser-based, with explicit snapshot updates; there are no accounts, automatic editor sync or native app. Create phone links from the hosted editor: localhost links only work on the same computer.
+- Touch-emulated Chromium portrait/landscape is tested; physical-device/Safari testing remains yours. Desktop remains the primary creation experience.
+- Owner update/revoke permission lives in this browser’s localStorage. Revocation prevents future loads but cannot erase copies already loaded. Expiry blocks reads after seven days; expired objects are removed on their next read, with no scheduled storage sweeper. Rate limits are process-local, not global quotas.
+- The reviewed upstream nested Zod advisory remains (four high package findings); the dependency gate passes only its narrow documented exception. Group play studies are deferred. Public Clips publication, legal acceptance and final submission remain user steps.

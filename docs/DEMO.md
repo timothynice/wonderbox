@@ -50,6 +50,14 @@ While the player is running, manually change Pip's palette or a world theme on d
 
 Return to desktop. Undo the last authored change and show the inspector/canvas update. Explain: “Direct edits and AI use the same validated actions, locks, revisions and Undo. Play state stays separate. You choose what to send and when to restart.” End on an appealing actual-game frame and the tagline. If using a separate victory take, label it as such.
 
+## Recorded manual feature highlight — November 4
+
+`output/playwright/art-phone-manual-demo.webm` is a **2:07 silent, captioned actual-app highlight**, 1440×900 at24fps. It starts from the original starter in a fresh browser, uses only direct UI controls, and shows original palette/silhouette/pattern/accessory edits, a real keyboard float landing, autumn/moonlight/crystal artwork, QR sharing, responsive browser touch play, and an explicit version2 restart. It contains no imported fixtures, runtime injection, or model calls.
+
+The desktop and responsive-player tracks are composited at their recorded timing. The final actual frame is held10seconds with an explicit limits caption. **Undo is omitted from this capture.** This recording demonstrates manual artwork and phone-sharing mechanics; it does not demonstrate successful live AI artwork, physical-device/Safari testing, a complete new signature sequence, or public Clips publication. Earlier live-model recordings below retain their separate provenance.
+
+Evidence and raw-track paths are in `output/playwright/art-phone-manual-evidence.json`; the inspected end frame is `output/playwright/art-phone-manual-final-frame.png`. Capture-only local links were removed afterward and should not be scanned from the video.
+
 ## Earlier mechanics-focused demo and historical evidence
 
 The sections below preserve the previous script and recording provenance. They do not establish new artwork-agent or phone success. They remain useful for a longer uncut mechanics/checked-route walkthrough.

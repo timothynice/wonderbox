@@ -126,7 +126,7 @@ User authorized priorities1–3 and specialist agents. Build richer shared origi
 - [x] Shared appearance schema/default migration/patches/locks/preview plus genuine model grammar/context.
 - [x] Original procedural rendering, calm inspector/art-direction controls, safe resume.
 - [x] Durable phone snapshot sharing with separate owner token, expiry/revocation, update prompt, mobile player/touch.
-- [ ] Vertical-slice unit/browser/live-provider checks, demo documentation/capture, final CI/build/deployment.
+- [x] Unit/browser checks, demo materials and deployment/hosted verification. Live artwork check remains access-blocked (provider credits), explicitly documented.
 
 Private Vercel Blob store provisioned and linked to existing Hobby project for authored snapshots; no upgrade or public bucket. Existing content retained. Secrets remain server-only. New Blob SDK dependency exposed a patched same-line CLI-config update; verify audit returns only existing reviewed upstream advisory. Local share files will be ignored; private owner tokens never appear in the QR link or public project JSON.
 
@@ -135,3 +135,9 @@ Implementation complete: shared original art with six palettes/exact independent
 Current checks:72 unit tests/15files, typecheck/build/dependency policy pass; expanded exactly3 browser paths passed WebGL and Canvas with retries disabled. Actual private Blob roundtrip/CAS/revoke passed after fixing compressed weakETags without weakening concurrency. Genuine new AI artwork remains blocked by providerHTTP402 depleted credits; pending owner credential/credit response. Manual demo capture and final deployment/hosted check in progress. Physical-device/Safari and group testing remain owner followups.
 
 Final frozen-source repeat: the same three browser tests passed9/9 across three runs (2.2min), retries disabled. Secret comparison across95 repository/source files and built assets found0 credential matches; `git diff --check` clean. Hosted expansion verification follows deployment.
+
+Hosted expansion0b36c74 verified at https://wonderbox-three.vercel.app: actual entity palette/scarf and world theme/terrain edits, preserved paused runtime/geometry, Undo; private durable QR snapshot in a separate mobile browser context, touch movement, version2 send, unchanged paused run until explicit restart, revoke/fresh404, reload.0 page exceptions; desktop console had0 errors/warnings (Chrome informational form DOM notices only). Fresh revoked-link404 was expected. Test link revoked. GitHub CI41947971438 passed and Vercel deploymentReady. No new hosted live AI request is claimed.
+
+New manual feature highlight: `output/playwright/art-phone-manual-demo.webm`,126.709s (2:07),1440×900,24fps,VP9,silent (~2.91MB). Actual UI on the original starter shows artwork/float landing/world mood/QR/two-finger responsive-browser play/explicit version2 restart. No model calls, fixtures or runtime injection. It omits Undo and physical-phone/live-AI proof; the final10second held frame explicitly says so. Raw provenance and harness failures are retained in `art-phone-manual-evidence.json`; no application failure is hidden as a passing assertion. Root inspected the final frame. The existing earlier actual live-AI recording remains separate. Capture links removed locally; no Clips publication.
+
+Release status: priorities1–3 implemented, tested and deployed. Remaining access-dependent verification: restore provider credits for genuine artwork request and final live artwork/behavior demo; owner physical-phone/Safari and deferred usability sessions; public Clips, terms and submission. No new hosted URL invented, no competition entry submitted.

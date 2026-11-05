@@ -64,7 +64,7 @@ These are composable typed parameters. Arbitrary scripts, new executable mechani
 
 `npm run build` then `npm start` serves the built UI and API together on port 3001. The server binds to `127.0.0.1` by default. `HOST`, `PORT` and `ALLOWED_ORIGIN` are configurable. Keep the Node process running and provide environment secrets through your hosting provider. Static-only hosting cannot run the AI API.
 
-The release has no accounts or per-user quotas. Before publishing a credentialed endpoint, put the entire app behind access control and HTTPS with a server-side rate limit/budget. Origin checks are a browser protection, not authentication; nonbrowser callers can bypass them. `ALLOWED_ORIGIN` permits an exact external origin. A reverse proxy can reach a localhost-bound Node process. No deployment target was preconfigured or authorized.
+The release has no accounts or per-user quotas. The authorized Vercel production deployment keeps play/direct editing public and protects model calls with a memory-only shared AI access code; missing hosted code configuration fails closed. Origin checks are a browser protection, not authentication; nonbrowser callers can bypass them. `ALLOWED_ORIGIN` permits an exact external origin. Configure provider quotas/budgets as well: process-local request limits are not a global spending cap. See README for deployment and private phone-snapshot storage.
 
 ## Verification
 
