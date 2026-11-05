@@ -159,4 +159,4 @@ If the agent exhausts its bounded search during a fresh rehearsal, use explicit 
 
 ## Public judging access
 
-Production AI needs no access code through November14,2026. At November15 midnight Pacific (`2026-11-15T08:00:00Z`), the server automatically restores the retained access-code requirement. Preview deployments stay protected. The owner’s existing provider usage cap remains in effect; no extra application spending limiter was added. Judges can open the production URL and use the creative partner directly.
+Production AI needs no access code through November27,2026. At November28 midnight Pacific (`2026-11-28T08:00:00Z`), the server automatically restores the retained access-code requirement. Preview deployments stay protected. The owner’s existing provider usage cap remains in effect; no extra application spending limiter was added. Judges can open the production URL and use the creative partner directly.

@@ -153,3 +153,9 @@ User authorized removing the code for judges and explicitly declined an extra us
 Public-window local verification: typecheck,72 unit tests/15files, production build and3/3 critical browser paths (38.5s) pass. Public requests still validate schema and reject foreign origins. Exact cutoff/expired/invalid configuration restores code protection. Production-only expiry configured; hosted anonymous live check follows deployment.
 
 Hosted fe034f6 Ready and verified: health reports accessCodeRequired:false; fresh browser shows no code input, sends no access-code header, receives genuine Gemini2.5Flash mint-artwork actions, preserves terrain and successfully undoes.0 page exceptions. Provider cap unchanged; public access automatically endsNovember15 midnight Pacific, retaining the prior code. Sanitized evidence in docs/evidence/public-judging-verification.json.
+
+## Public access extension and final competition priorities
+
+Owner requested code protection returnNovember28. Production `AI_PUBLIC_UNTIL` extended to2026-11-28T08:00:00Z (November28 midnight Pacific); provider usage cap unchanged. Current setup docs updated; earlier dated verification records retain their original cutoff as historical evidence. Deployment/config verification follows.
+
+Highest remaining competition priorities: improve compound-request correctness and summary fidelity (two genuine combined restyles omitted requested lighting); rehearse/record a new concise real-AI artwork+behavior+manual context+Undo+phone handoff demo; owner physical-iPhone/Safari playthrough and full starter victory; publish required public Clips and verify signed out; finalize description/attribution/creator details, submit beforeNovember9 11:59p.m.Pacific and confirm receipt. Group studies remain deferred per owner; no App Store/accounts/new engine scope. Existing tests/CI/public deployment and shared Agent-Native actions provide the foundation, but no winning score is guaranteed.
