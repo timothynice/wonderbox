@@ -324,7 +324,7 @@ export async function proposeEdit(raw: unknown, fetcher: typeof fetch = fetch): 
       const {provider: _provider, model: _model, usedFallback: _fallback, primaryModel: _primary, providerNotice: _notice, ...plan} = understood;
       intent = intentPlanSchema.parse(plan);
       validateIntent(intent,input.project);
-      activity.push({capability:'intent',status:'completed',summary:`${understood.model} identified ${intent.fields.length + intent.counts.length + intent.existence.length} requested checks independently of candidate actions.`});
+      activity.push({capability:'intent',status:'completed',summary:`${understood.model} identified ${intent.fields.length + intent.counts.length + intent.existence.length + Number(intent.allowTerrainChanges)} requested checks independently of candidate actions.`});
       if(intent.mode!=='edit') return {...base,provider:understood.provider,model:understood.model,usedFallback:understood.usedFallback,...(understood.primaryModel?{primaryModel:understood.primaryModel,providerNotice:understood.providerNotice}:{}),actions:[],summary:intent.mode==='inspect'?canonicalInspection(input.project,intent):`No changes prepared. ${intent.explanation || 'That request is outside the supported engine. Try a supported property or artwork edit.'}`,requiresApproval:false,affectedIds:[],activity,intent};
     }
     const planning = checkRequest ? await planStaticStep.run({ project: input.project, check: checkRequest }) : undefined;
@@ -369,7 +369,7 @@ export async function proposeEdit(raw: unknown, fetcher: typeof fetch = fetch): 
       let preview: Awaited<ReturnType<typeof previewTransaction.run>>;
       try {
         preview = await previewTransaction.run({ project: input.project, actions: proposal.actions, expectedRevision: input.project.revision, source: 'ai', ...(checkRequest ? { checkRequest } : {}) });
-        activity.push({ capability: 'preview', status: 'validated', attempt, summary: `Validated ${proposal.actions.length} actions as one atomic preview affecting ${preview.affectedIds.length} authored objects or regions.` });
+        activity.push({ capability: 'preview', status: 'validated', attempt, summary: `Validated ${proposal.actions.length} actions as one atomic preview with ${preview.changes.length} recorded changes.` });
       } catch (error) {
         const message = error instanceof Error ? error.message.slice(0, 400) : 'The candidate failed action validation.';
         activity.push({ capability: 'preview', status: 'rejected', attempt, summary: message });

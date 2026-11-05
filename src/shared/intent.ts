@@ -86,8 +86,10 @@ export function checkEditIntent(before:Project,after:Project,intent:EditIntent):
     for(const field of entityFields)if(!equal(readPath(old,field),readPath(next,field))&&!intent.fields.some(c=>c.target==='entity'&&c.id===old.id&&c.field===field))missing.push(`Unrequested change: ${old.name} · ${field}`);
   }
   for(const next of after.entities)if(!before.entities.some(e=>e.id===next.id)&&!intent.counts.some(c=>c.kind===next.kind&&c.delta>0))missing.push(`Unrequested addition: ${next.name}`);
-  if(!intent.allowTerrainChanges&&JSON.stringify(before.terrain)!==JSON.stringify(after.terrain))missing.push('Terrain must remain unchanged.');
-  return {passed:missing.length===0,requested:intent.fields.length+intent.counts.length+intent.existence.length,matched,missing};
+  const terrainChanged=JSON.stringify(before.terrain)!==JSON.stringify(after.terrain);
+  if(!intent.allowTerrainChanges&&terrainChanged)missing.push('Terrain must remain unchanged.');
+  if(intent.allowTerrainChanges)(terrainChanged?matched:missing).push('Requested terrain edit changes authored terrain.');
+  return {passed:missing.length===0,requested:intent.fields.length+intent.counts.length+intent.existence.length+Number(intent.allowTerrainChanges),matched,missing};
 }
 export function canonicalEditSummary(preview:TransactionPreview):string {
   if(!preview.changes.length)return 'No authored changes. The requested values are already set.';

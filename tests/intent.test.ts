@@ -21,6 +21,14 @@ function scripted(values:unknown[]){const queue=[...values];return vi.fn<typeof 
 
 describe('Independent AI request contract and truthful summaries',()=>{
   afterEach(()=>vi.unstubAllEnvs());
+  it('does not treat an empty terrain candidate as a completed edit',()=>{
+    const project=createStarterProject(),intent={...empty,allowTerrainChanges:true};
+    const none=checkEditIntent(project,project,intent);
+    expect(none.passed).toBe(false);expect(none.requested).toBe(1);
+    expect(none.missing).toContain('Requested terrain edit changes authored terrain.');
+    const next=applyTransaction(project,[{type:'paintTerrain',terrain:[{id:'requested-step',x:120,y:480,width:80,height:20}],eraseIds:[]}]);
+    expect(checkEditIntent(project,next,intent).passed).toBe(true);
+  });
   it('scopes Gemini world grammar to all independent requested settings',()=>{
     const grammar=geminiResponseSchema(z.toJSONSchema(proposalSchema),compound);
     const settings=grammar.properties.actions.items.properties.settings;
