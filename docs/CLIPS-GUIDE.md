@@ -6,7 +6,7 @@ Prepared November 4, 2026. No Clips account was created, no terms accepted, no s
 
 Start at **https://clips.agent-native.com** in a desktop browser. A separate installation is not necessary for the web-library/upload route. Official Clips documentation describes a built-in recorder, **Upload a video file**, and drag-and-drop upload. It also offers an optional desktop recorder and a Chrome extension for browser-debugging logs. See [Clips overview](https://www.agent-native.com/docs/template-clips/) and [features](https://www.agent-native.com/docs/template-clips-features/).
 
-For this project, the simplest route is to watch the prepared narrated MP4, then upload that actual-app recording to Clips. You can instead rehearse the same sequence and record your own narration and app interaction in Clips. A locally saved MP4 alone is not a public Clips link.
+For this project, the simplest route is to watch the completed 2:47 narrated MP4 at `output/playwright/final-demo/production/wonderbox-final-demo.mp4`, then upload that actual-app recording to Clips. Its source, transcript and edit disclosures are documented in [DEMO-RECORDING.md](DEMO-RECORDING.md). You can instead rehearse the same sequence and record your own narration and app interaction in Clips. A locally saved MP4 alone is not a public Clips link.
 
 ## What was actually checked
 

@@ -1,6 +1,12 @@
 # Wonderbox demo — artwork, behavior and phone play
 
-## Current showcase: 2–3 minute edited target
+## Final narrated actual-app walkthrough — November 4
+
+The completed local walkthrough is **2:47**, 1440×900 H.264/AAC: `output/playwright/final-demo/production/wonderbox-final-demo.mp4`. It uses approved local Voicebox Heart narration and one successful actual-app take with three genuine AI workflows (four model calls: two for the compound edit, one for inspection, one for checked terrain). It shows eight checked compound art/behavior changes, actual keyboard float landing, transaction Undo, manual 0.65-second state read by the agent, and the Agent-Native inspect → shared step planning → proposal → checked preview → Apply → labeled runtime replay → Undo workflow. No fixture or runtime injection was used; the source take recorded no page or HTTP errors.
+
+AI waiting time is shortened and some source frames are held under narration, with an on-screen disclosure. The raw take, edit manifest, transcript and optional captions are retained. This is a local production-app recording, not public Clips publication, a full victory run, a physical-phone test, or a human play study. See [recording provenance and reproduction](DEMO-RECORDING.md), [narration](DEMO-NARRATION.json), and [Clips upload/submission preparation](CLIPS-GUIDE.md). Review the MP4 with sound before uploading.
+
+## Earlier artwork/phone showcase plan: 2–3 minute edited target
 
 This is the **planned final recording sequence** for the artwork/phone release, not a claim that a new live-AI take has already been recorded. Historical recordings below remain evidence of their original builds. Current artwork and phone checks must be documented separately from earlier live-model mechanic evidence.
 

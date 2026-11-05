@@ -1,0 +1,57 @@
+[
+  {
+    "id": "opening",
+    "title": "Imagine it",
+    "voice": "Imagine a game you can reshape while you play. This is Wonderbox: an original, playable garden, and a creative partner that changes the game itself. Imagine it. Make it. Play it."
+  },
+  {
+    "id": "possibility",
+    "title": "A new possibility",
+    "voice": "That flower ledge is a little too high for Pip's ordinary jump. Pause, select the character, and describe a new possibility. The editor keeps the moment, so the next idea starts right here."
+  },
+  {
+    "id": "compound",
+    "title": "Art and behavior",
+    "voice": "Let's change the mood and the character together: autumn moonlight, crystal terrain, a lavender leaf accessory, and a brief float while holding jump. This is a genuine model request. Waiting time is shortened in this walkthrough."
+  },
+  {
+    "id": "verified",
+    "title": "Review before playing",
+    "voice": "The proposal names the changes it actually validated. Art and behavior share a single transaction. Positions and platform geometry stay intact. I review the preview, then apply it."
+  },
+  {
+    "id": "float",
+    "title": "Play the change",
+    "voice": "Now play the idea. Holding jump gives Pip that extra moment in the air, and the original ledge becomes reachable. This is actual keyboard play, with no teleporting or injected game state."
+  },
+  {
+    "id": "manual",
+    "title": "One shared world",
+    "voice": "One Undo restores the whole AI edit. Now I'll set the float duration myself, to point six five seconds, and ask the creative partner to read it back without changing anything."
+  },
+  {
+    "id": "canonical",
+    "title": "Current state, not chat memory",
+    "voice": "It reads my manual point six five second setting from the current authored project. Agent-Native actions inspect that same state and apply the same validated transactions for the inspector and agent. The activity trace makes those capabilities visible."
+  },
+  {
+    "id": "baseline",
+    "title": "Change the route",
+    "voice": "Let's solve the same ledge another way. Restore the ordinary jump and check the route from the authored spawn. The bounded search finds no route with these inputs. That is useful evidence, not a claim of impossibility."
+  },
+  {
+    "id": "checked",
+    "title": "Inspect, propose, check",
+    "voice": "The agent inspects the world. A shared mechanical planner supplies checked step options; the model chooses a proposal, then the transaction is checked again before Apply. The ghost platform and trajectory explain it. This uses the game's movement step, checking static terrain rather than enemies, moving platforms, or human enjoyment."
+  },
+  {
+    "id": "replay",
+    "title": "Test in the real runtime",
+    "voice": "Apply validates the transaction again and explains the structural restart. Then the labeled route replay drives the actual game with scripted inputs. Pip reaches the ledge with the character unchanged. This is a mechanical check, separate from a human playtest."
+  },
+  {
+    "id": "closing",
+    "title": "You stay the maker",
+    "voice": "Undo removes the terrain edit as one step. Direct editing and AI share validation, revisions, locks, and history, while play state stays separate. A playable idea, a visible change, and a way back. Wonderbox. Imagine it. Make it. Play it."
+  }
+]

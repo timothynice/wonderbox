@@ -40,3 +40,8 @@ The bounded geometric step planner and dependency policy are new original applic
 ## Artwork and phone expansion
 
 New palettes, editable colors, silhouettes, patterns, accessories, theme miniatures and world/terrain variations are original procedural artwork. No external image-generation service or imported art was added. `qrcode` (MIT, https://github.com/soldair/node-qrcode) generates play-link QR codes; `@vercel/blob` (Apache-2.0, https://github.com/vercel/storage) stores private authored snapshots. Provider-fixture tests are labeled and are not actual model responses. The CLI-config override keeps this new dependency chain on its patched compatible release; the existing AG-UI nested Zod exception remains unchanged.
+
+
+## Final walkthrough production
+
+The narrated walkthrough adapts the owner's pre-existing local Brim narration utility (`scripts/narrate-tutorial.py` in that separate project) into this repository's `scripts/narrate-demo.py`, a production tool rather than runtime application code. This tool predates Wonderbox; the capture/render scripts and narration were created for Wonderbox. It calls local Voicebox with the previously approved Kokoro Heart preset (`af_heart`); no Brim footage/artwork, remote paid speech service or voice cloning is used. The Wonderbox capture script, narration text and edit manifest are new for this project. Playwright captures actual application video; FFmpeg encodes H.264/AAC. Narration is prerecorded, and any shortened waits/frame holds are documented with retained raw footage. The local machine paths/receipts are production evidence and are not required to run Wonderbox.
